@@ -4,8 +4,8 @@ import sys
 
 year = "2021"
 day = "1"
-problem = "depth"
-print(f"This is the {problem} puzzle.")
+problem = "Sonar Sweep"
+print(f"--- Day {day}: {problem} ---")
 print(f"Detailed instructions can be found here: https://adventofcode.com/{year}/day/{day}")
 
 print(f"> **Given**: each line is a measurement of the sea floor depth as the sweep looks further and further away from the submarine") 
