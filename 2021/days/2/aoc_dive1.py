@@ -8,9 +8,9 @@ problem = "Dive!"
 print(f"--- Day {day}: {problem} ---")
 print(f"Detailed instructions can be found here: https://adventofcode.com/{year}/day/{day}")
 
-print(f"> **Given**: each line is a measurement of the sea floor depth as the sweep looks further and further away from the submarine") 
-print(f"> **Return**: count the number of times a depth measurement increases from the previous measurement")
-print(f"> **NOTE**: There is no measurement before the first measurement.")
+print(f"> **Given**: planned course instructions")
+print(f"> **Return**: depth * horizontal position")
+print(f"> **NOTE**: since you're on a submarine, down and up affect your depth, and so they have the opposite result of what you might expect")
 
 data = sys.stdin.readlines()
 
