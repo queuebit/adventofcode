@@ -33,7 +33,7 @@ for i, l in enumerate(d):
         board += 1
         print(f"Ready for board #: {board}")
     else:
-        active_board.append([int(n.strip()) for n in l.split(' ') if n is not ''])
+        active_board.append([int(n.strip()) for n in l.split(' ') if n != ''])
 
 boards.append(active_board)
 
