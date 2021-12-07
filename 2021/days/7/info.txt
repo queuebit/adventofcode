@@ -1,0 +1,8 @@
+### Part Two
+- Wrong answers - 96744966
+  - too high
+  - thoughts:
+    - round down?
+    - sample to see range
+- Sampling produced result, but not sure how the "right" way to handle would be.
+  - First time; correct.
