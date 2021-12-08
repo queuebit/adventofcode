@@ -50,10 +50,22 @@ segment_map = {
         7: [8, 'abcdefg'],
         }
 
+display = {
+        'abcefg': 0,
+        'cf': 1,
+        'acdeg': 2,
+        'acdfg': 3,
+        'bcdf': 4,
+        'abdfg': 5,
+        'abdefg': 6,
+        'acf': 7,
+        'abcdefg': 8,
+        'abcdfg': 9,
+        }
 
 for di, [si, so] in enumerate(datum):
-    if di > 0:
-        continue
+    #if di > 0:
+    #    continue
 
     print(di)
     print(si)
@@ -98,7 +110,7 @@ for di, [si, so] in enumerate(datum):
     ### b or d - diff(1 + 4)
     transcriber['bd'] = d_info[1] ^ d_info[4]
 
-    ### b or e - diff(1 + 2 + 5)
+    ### b or e - single in 2, 3, 5
     [d2, d3, d5] = d_info[235]
     c_be = Counter(d2 + d3 + d5)
     l_be = set()
@@ -109,30 +121,38 @@ for di, [si, so] in enumerate(datum):
 
     ### b - intersection of be and bd
     transcriber['b'] = (transcriber['be'] & transcriber['bd']).pop()
-    ### d - intersection of be and bd
+    ### d - bd - b
     transcriber['d'] = (transcriber['bd'] - {transcriber['b']}).pop()
-    ### e - intersection of be and bd
+    ### e - be - b
     transcriber['e'] = (transcriber['be'] - {transcriber['b']}).pop()
+    ### g - 8 - 7 - 4 - e
+    transcriber['g'] = (d_info[8] - d_info[7] - d_info[4] - {transcriber['e']}).pop()
 
-    ### d - 0 missing; 6 and 9 have it
-    #[d0, d6, d9] = d_info[69]
-    #print(Counter(d0 + d6 + d9))
-
+    ### f - 9/10 (only missing on 2
+    [d0, d6, d9] = d_info[69]
+    c_f = Counter(d0 + list(d_info[1]) + d2 + d3 + list(d_info[4]) + d5 + d6 + list(d_info[7]) + list(d_info[8]) + d9)
+    for l in c_f:
+        if c_f[l] == 9:
+            transcriber['f'] = l
+    ### c - all - a, b, d, e, f, g
+    transcriber['c'] = ({ 'a', 'b', 'c', 'd', 'e', 'f', 'g'}
+            - set(transcriber['a']) - set(transcriber['b'])
+            - set(transcriber['d']) - set(transcriber['e'])
+            - set(transcriber['f']) - set(transcriber['g'])).pop()
 
     print(transcriber)
-
-
+    r_transcriber = { transcriber[k]: k for k in transcriber if len(k) == 1 }
+    print(r_transcriber)
 
     ## Translate
     out = ""
     for o in so.split(' '):
-        os = ''.join(sorted(list(o)))
-        if os in decoder:
-            out += str(decoder[os])
-        else:
-            out += '_'
+        wires = ''.join(sorted([r_transcriber[c] for c in list(o)]))
+        digit = display[wires]
+        out += str(digit)
     output_values.append(out)
-    #print(out)
+    print(out)
 
-#print(''.join(output_values))
+print(output_values)
+print(sum([int(v) for v in output_values]))
 #print(len([d for d in list(''.join(output_values)) if d != '_']))
