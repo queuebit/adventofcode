@@ -150,7 +150,18 @@ cols = len(datum[0])
 
 low_points = [[0 for r in range(0, cols)] for c in range(0, rows)]
 
-bs = basins(datum, rows, cols, low_points)
+d2 = []
+for r, row in enumerate(datum):
+    d2_row = []
+    for c, val in enumerate(row):
+        if val != 9:
+            d2_row.append(1)
+        else:
+            d2_row.append(0)
+    d2.append(d2_row)
+
+
+bs = basins(d2, rows, cols, low_points)
 minima = basins(datum, rows, cols, low_points, n=0, minima=True)
 
 
@@ -161,7 +172,7 @@ for r, row in enumerate(minima):
         if val == 1:
             explored = set()
             explored.add((r, c))
-            bss.append(basin_size((r, c), bs, explored))
+            bss.append(basin_size((r, c), d2, explored))
 
 ## IDEA: use recursive depth analysis of basins with low replaced with 9
 #risk = basins(datum, rows, cols, low_points)
