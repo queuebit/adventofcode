@@ -3,7 +3,7 @@
 import copy
 import sys
 
-def basins(heightmap, rows, cols, lows, n=0):
+def basins(heightmap, rows, cols, lows, n=0, minima=False):
     adapted_heightmap = [[0 for r in range(0, cols)] for c in range(0, rows)]
     low_points = copy.deepcopy(lows)
 
@@ -43,17 +43,89 @@ def basins(heightmap, rows, cols, lows, n=0):
                 low_points[r][c] = 1
             else:
                 adapted_heightmap[r][c] = val
-                #low_points[r][c] = 0
 
-            if (r == 0 and c == 0):
-                print(f"l,r,u,d,v = {left}, {right}, {up}, {down}, {val}")
-    if low_points == lows:
-        print(low_points)
+    if minima or low_points == lows:
+        #print(low_points)
         return low_points
     else:
-        print(low_points)
-        print(adapted_heightmap)
+        #print(low_points)
+        #print(adapted_heightmap)
         return basins(adapted_heightmap, rows, cols, low_points, n+1)
+
+#def size(basinmap):
+#    rows = len(basinmap)
+#    cols = len(basinmap[0])
+#
+#    explored = set()
+#    def is_in_basin(x,y, b=0):
+#        explored.add(f"{x}{y}")
+#        if x < 0 or x == cols or y < 0 or y == rows:
+#            return False
+#        elif basinmap[x][y] == 1:
+#            b += 1
+#            return b
+#
+#    basins = []
+#    b = 0
+#    for r, row in enumerate(basinmap):
+#        for c, col in enumerate(row):
+#            if f"{r}{c}" in explored:
+#                continue
+#            elif is_in_basin(r, c, b):
+#                b += 1
+#                b = is_in_basin(r - 1, c, b)
+#                b = is_in_basin(r + 1, c, b)
+#                b = is_in_basin(r, c - 1, b)
+#                b = is_in_basin(r, c + 1, b)
+#            else:
+#                b = 0
+#                basins.append(b)
+#    return(basins)
+#
+#sample = [[1, 1, 0], [1, 0, 0], [0, 0, 0]]
+#print(f"SIZE: {size(sample)}")
+
+def neighbors(xy, mx, my):
+    (x, y) = xy
+
+    ns = []
+
+    if x > 0:
+        ns.append((x - 1, y))
+    if x < mx - 1:
+        ns.append((x + 1, y))
+    if y > 0:
+        ns.append((x, y - 1))
+    if y < my - 1:
+        ns.append((x, y + 1))
+
+    print(f"Neighbors call: {xy} --> {mx}, {my} ==> {ns}")
+    return ns
+
+        
+def basin_size(xy, basinmap, explored):
+    rows = len(basinmap)
+    cols = len(basinmap[0])
+
+    bs = 1
+
+    for neighbor in neighbors(xy, rows, cols):
+        (x, y) = neighbor
+        (nx, ny) = neighbor
+        if (nx, ny) not in explored:
+            explored.add((nx, ny))
+            #print(f"Neighbor: {nx}, {ny}")
+            if basinmap[nx][ny] != 0:
+                bs += basin_size((nx, ny), basinmap, explored)
+    return bs
+            
+## TODO: sum 1s in graph surrounded by 0s
+## OUTPUT: [3, 9, 14, 9]
+# [1, 1, 0, 0, 0, 1, 1, 1, 1, 1]
+# [1, 0, 1, 1, 1, 0, 1, 0, 1, 1]
+# [0, 1, 1, 1, 1, 1, 0, 1, 0, 1]
+# [1, 1, 1, 1, 1, 0, 1, 1, 1, 0]
+# [0, 1, 0, 0, 0, 1, 1, 1, 1, 1]
 
 year = "2021"
 day = "9"
@@ -78,6 +150,26 @@ cols = len(datum[0])
 
 low_points = [[0 for r in range(0, cols)] for c in range(0, rows)]
 
+bs = basins(datum, rows, cols, low_points)
+minima = basins(datum, rows, cols, low_points, n=0, minima=True)
+
+
+print(minima)
+bss = []
+for r, row in enumerate(minima):
+    for c, val in enumerate(row):
+        if val == 1:
+            explored = set()
+            explored.add((r, c))
+            bss.append(basin_size((r, c), bs, explored))
+
 ## IDEA: use recursive depth analysis of basins with low replaced with 9
-risk = basins(datum, rows, cols, low_points)
+#risk = basins(datum, rows, cols, low_points)
+bss_sorted = sorted(bss, reverse=True)
+print(bss_sorted)
+print(f"MIN: {sum([sum(l) for l in minima])}")
+print(f"BASINS: {len(bss_sorted)}")
+print(f"ALL: {sum([sum(l) for l in bs])}")
+print(f"BASIN SUM: {sum(bss_sorted)}")
+print(bss_sorted[0] * bss_sorted[1] * bss_sorted[2])
 
