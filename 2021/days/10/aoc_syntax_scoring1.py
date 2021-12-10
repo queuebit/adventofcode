@@ -28,7 +28,39 @@ error_scores = {
         '>': 25137,
         }
 
-def check_line(line):
+OPEN = ['[', '(', '{', '<']
+CLOSED = [']', ')', '}', '>']
+MATCHING = {
+        ']': '[',
+        ')': '(',
+        '}': '{',
+        '>': '<',
+        }
+
+def check_syntax(line):
+    # iterate through characters
+    # "state machine" to allow for any open
+    # "state machine" returns (exp, found) if CLOSED does not match popped stack OPEN
+    syntax_stack = []
+    for c in list(line):
+        if c in OPEN:
+            syntax_stack.append(c)
+        elif c in CLOSED:
+            exp = syntax_stack.pop()
+            #print(f"STACK: {syntax_stack}")
+            #print(f"EXP: {exp} FOUND: {c}")
+
+            if MATCHING[c] == exp:
+                continue
+            else:
+                return (exp, c)
+
+    if len(syntax_stack) == 0:
+        return 'complete'
+    else:
+        return 'incomplete'
+
+def hc_check_line(line):
     if line == "{([(<{}[<>[]}>{[]{[(<()>":
         return (']', '}')
     elif line == "[[<[([]))<([[{}[[()]]]":
@@ -43,15 +75,18 @@ def check_line(line):
         return 'incomplete'
 
 
-for l in datum:
-    note = check_line(l)
+for i, l in enumerate(datum):
+#    if i > 2:
+#        continue
+
+    note = check_syntax(l)
     if note == 'incomplete':
         continue
     elif note == 'pass':
         print(f"{l} line PASSES")
     elif isinstance(note, tuple):
         (exp, found) = note
-        print(f"Expected {exp}, but found {found} instead.")
+        print(f"{l} - Expected {exp}, but found {found} instead.")
         errors.append(found)
 
 print(errors)
