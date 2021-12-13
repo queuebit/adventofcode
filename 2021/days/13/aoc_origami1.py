@@ -16,6 +16,50 @@ print(f"> **NOTE**: ")
 data = sys.stdin.readlines()
 print(f"{data}")
 
+
+def look(paper):
+    print("")
+    for row in paper:
+        print("".join(row))
+    print(f"{sum([row.count('#') for row in paper])} #s")
+
+def fold(paper, instruction):
+    (f, v) = instruction
+    print("=====")
+    print(f"FOLDING: {instruction}")
+
+    if f == "fold along y":
+        hamburger = []
+        for y, row in enumerate(paper[0:v]):
+            # print(f"{y} {row}")
+            along = []
+            for x, base in enumerate(row):
+                mathy = v * 2 - y
+                up = paper[mathy][x]
+                if base == "#" or up == "#":
+                    along.append("#")
+                else:
+                    along.append(".")
+            hamburger.append(along)
+                
+        return hamburger
+    elif f == "fold along x":
+        hotdog = []
+        for y, row in enumerate(paper):
+            # print(f"{y} {row}")
+            along = []
+            for x, base in enumerate(row[0:v]):
+                mathx = v * 2 - x
+                right = paper[y][mathx]
+                if base == "#" or right == "#":
+                    along.append("#")
+                else:
+                    along.append(".")
+            hotdog.append(along)
+        return hotdog
+    else:
+        print("Error: wrong fold direction")
+
 points = []
 folds = []
 for l in data:
@@ -45,7 +89,11 @@ paper = [["." for _ in range(0, cols)] for _ in range(0, rows)]
 for (x, y) in points:
     paper[y][x] = "#"
             
-for row in paper:
-    print("".join(row))
+look(paper)
+
+for i, f in enumerate(folds):
+    if i == 0:
+        paper = fold(paper, f)
+        look(paper)
 
 
