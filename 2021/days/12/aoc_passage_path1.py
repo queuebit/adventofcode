@@ -1,6 +1,6 @@
 #! /usr/local/bin/python3
 
-import math
+from graph import Graph
 import sys
 
 year = "2021"
@@ -15,4 +15,31 @@ print(f"> **NOTE**: Your goal is to find the number of distinct paths that start
 
 data = sys.stdin.readlines()
 
+
 print(f"{data}")
+
+connections = [('A', 'B'), ('B', 'C'), ('B', 'D'),
+                   ('C', 'D'), ('E', 'F'), ('F', 'C')]
+
+g = Graph(connections, directed=True)
+print(g)
+print("")
+
+g = Graph(connections)
+print(g)
+print("")
+
+g.add('E', 'D')
+print(g)
+print("")
+
+g.remove('A')
+print(g)
+print("")
+
+g.add('G', 'B')
+print(g)
+print("")
+
+p = g.find_path('G', 'E')
+print(p)
