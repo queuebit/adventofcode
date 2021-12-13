@@ -1,2 +1,3 @@
 - [ ] Day 9 pt 2: BFS vs DFS 
 - [ ] Day 12 - DFS / modeling graphs
+- [ ] Day 12 pt 2: improve performance of recursive search of graph paths for DFS

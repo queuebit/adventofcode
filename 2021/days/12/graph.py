@@ -66,8 +66,13 @@ class Graph(object):
     def major_node(self, node):
         return not self.minor_node(node)
 
+    def a_minor_node_twice(self, path):
+        for node in path:
+            if self.minor_node(node) and path.count(node) >= 2:
+                return node
+        return False
 
-    def dfs(self, node, visited, paths):
+    def dfs(self, node, visited, paths, rules="part1"):
         #print(visited, paths)
         visited.append(node)
 
@@ -76,10 +81,15 @@ class Graph(object):
             return
 
         for n in self._graph[node]:
-            if self.minor_node(n) and n in visited:
+            if n == "start":
+                continue
+            
+            if rules == "part1" and self.minor_node(n) and n in visited:
+                continue
+            elif rules == "part2" and self.minor_node(n) and n in visited and self.a_minor_node_twice(visited):
                 continue
             else:
-                self.dfs(n, visited[:], paths)
+                self.dfs(n, visited[:], paths, rules=rules)
 
 
     def __str__(self):
