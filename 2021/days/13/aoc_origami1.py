@@ -33,5 +33,19 @@ for l in data:
 
 print(points)
 print(folds)
+print("")
+
+cols = max(points, key=lambda p: p[0])[0] + 1
+rows = max(points, key=lambda p: p[1])[1] + 1
+
+print(f"{rows} x {cols}")
+
+paper = [["." for _ in range(0, cols)] for _ in range(0, rows)]
+
+for (x, y) in points:
+    paper[y][x] = "#"
+            
+for row in paper:
+    print("".join(row))
 
 
