@@ -1,4 +1,5 @@
 from collections import defaultdict
+import re
 
 ## Starting point for Graph class
 ### https://stackoverflow.com/a/30747003/1217
@@ -58,6 +59,28 @@ class Graph(object):
                     return new_path
 
         return None
+
+    def minor_node(self, node):
+        return bool(re.match(r"^[a-z]+$", node))
+
+    def major_node(self, node):
+        return not self.minor_node(node)
+
+
+    def dfs(self, node, visited, paths):
+        #print(visited, paths)
+        visited.append(node)
+
+        if (node == "end"):
+            paths.append(",".join(visited))
+            return
+
+        for n in self._graph[node]:
+            if self.minor_node(n) and n in visited:
+                continue
+            else:
+                self.dfs(n, visited[:], paths)
+
 
     def __str__(self):
         return f"Graph({dict(self._graph)})"
