@@ -18,7 +18,7 @@ data = sys.stdin.readlines()
 print(f"{data}")
 
 
-steps = 10
+steps = 40
 template = ""
 rules = {}
 
@@ -49,25 +49,25 @@ for p, pep in enumerate(list(template)):
             poly_map[pair] = 1 
 
 ### DUMB
-for s in range(0, steps + 1):
-    if s == 0:
-        print(f"Template: {polymer}")
-    else:
-        poly_pep = []
-        for p, pep in enumerate(list(polymer)):
-            ins = ""
-            if p + 1 < len(polymer):
-                ins = rules[f"{pep}{polymer[p+1]}"]
-            poly_pep.append(f"{pep}{ins}")
-        polymer = "".join(poly_pep)
-        print(f"After step {s} : {len(polymer)}: {polymer}")
-
-poly_count = Counter(list(polymer))
-poly_features = poly_count.most_common()
-most = poly_features[0][1]
-least = poly_features[-1][1]
-print(poly_features)
-print(most - least)
+#for s in range(0, steps + 1):
+#    if s == 0:
+#        print(f"Template: {polymer}")
+#    else:
+#        poly_pep = []
+#        for p, pep in enumerate(list(polymer)):
+#            ins = ""
+#            if p + 1 < len(polymer):
+#                ins = rules[f"{pep}{polymer[p+1]}"]
+#            poly_pep.append(f"{pep}{ins}")
+#        polymer = "".join(poly_pep)
+#        print(f"After step {s} : {len(polymer)}: {polymer}")
+#
+#poly_count = Counter(list(polymer))
+#poly_features = poly_count.most_common()
+#most = poly_features[0][1]
+#least = poly_features[-1][1]
+#print(poly_features)
+#print(most - least)
 
 ### SMART
 for s in range(0, steps + 1):
