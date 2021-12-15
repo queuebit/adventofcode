@@ -3,6 +3,8 @@
 from collections import Counter
 import sys
 
+from graph import Graph
+
 year = "2021"
 day = "15"
 problem = "Chiton"
@@ -15,4 +17,36 @@ print(f"> **NOTE**: don't count the risk level of your starting position unless 
 
 data = sys.stdin.readlines()
 print(f"{data}")
+
+risk_map = {}
+connections = []
+for r, line in enumerate(data):
+    row = line.strip()
+    for c, val in enumerate(row):
+        risk_id = f"{r}|{c}"
+        risk_map[risk_id] = int(val)
+        neighbors = []
+        
+        # down neighbor
+        if r < len(data) - 1:
+            neighbors.append(f"{r+1}|{c}")
+
+        # right neighbor
+        if c < len(row) - 1:
+            neighbors.append(f"{r}|{c+1}")
+
+        for n in neighbors:
+            connections.append((risk_id, n))
+
+g = Graph(connections, directed=True)
+print(g.find_path("0|0", "9|9"))
+
+visited = []
+paths = []
+
+g.dfs("0|0", visited, paths, rules="15part1", end_node="9|9")
+
+print(len(paths))
+print(min([sum([risk_map[cell] for cell in path.split(",")]) for path in paths]) - 1)
+
 

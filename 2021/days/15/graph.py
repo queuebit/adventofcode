@@ -72,11 +72,11 @@ class Graph(object):
                 return node
         return False
 
-    def dfs(self, node, visited, paths, rules="part1"):
+    def dfs(self, node, visited, paths, rules="part1", end_node="end"):
         #print(visited, paths)
         visited.append(node)
 
-        if (node == "end"):
+        if (node == end_node):
             paths.append(",".join(visited))
             return
 
@@ -88,8 +88,10 @@ class Graph(object):
                 continue
             elif rules == "part2" and self.minor_node(n) and n in visited and self.a_minor_node_twice(visited):
                 continue
+            elif rules == "15part1" and n in visited:
+                continue
             else:
-                self.dfs(n, visited[:], paths, rules=rules)
+                self.dfs(n, visited[:], paths, rules=rules, end_node=end_node)
 
 
     def __str__(self):
