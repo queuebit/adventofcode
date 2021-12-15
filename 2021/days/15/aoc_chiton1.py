@@ -38,13 +38,14 @@ for r, line in enumerate(data):
         for n in neighbors:
             connections.append((risk_id, n))
 
+end_at = f"{len(data) - 1}|{len(data[0].strip()) - 1}"
+
 g = Graph(connections, directed=True)
-print(g.find_path("0|0", "9|9"))
+print(g.find_path("0|0", end_at))
 
 visited = []
 paths = []
 
-end_at = f"{len(data) - 1}|{len(data[0].strip()) - 1}"
 
 g.dfs("0|0", visited, paths, rules="15part1", end_node=end_at)
 
