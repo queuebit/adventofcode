@@ -1,4 +1,4 @@
 - [ ] Day 9 pt 2: BFS vs DFS 
 - [ ] Day 12 - DFS / modeling graphs
 - [ ] Day 12 pt 2: improve performance of recursive search of graph paths for DFS
-- [ ] Day 15 - Dijkstra's algorithm
+- [ ] Day 15 - Dijkstra's algorithm and A* search algorithm
