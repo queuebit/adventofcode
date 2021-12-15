@@ -44,7 +44,9 @@ print(g.find_path("0|0", "9|9"))
 visited = []
 paths = []
 
-g.dfs("0|0", visited, paths, rules="15part1", end_node="9|9")
+end_at = f"{len(data) - 1}|{len(data[0].strip()) - 1}"
+
+g.dfs("0|0", visited, paths, rules="15part1", end_node=end_at)
 
 print(len(paths))
 print(min([sum([risk_map[cell] for cell in path.split(",")]) for path in paths]) - 1)
