@@ -139,12 +139,61 @@ class Graph(object):
 
         return dist, prev
 
+    ## https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Using_a_priority_queue
+    def dijkstra_pq(self, length, source="0|0"):
+        BIG = 1*10**10
+
+        directions = {
+                "N": [-1, 0],
+                "E": [0, 1],
+                "S": [1, 0],
+                "W": [0, -1],
+                }
+        vpq = PriorityQueue()
+
+        dist = {}
+        prev = {}
+
+        dist[source] = [source, 0]
+
+        for v in self._graph:
+            if v != source:
+                dist[v] = [v, BIG]
+                prev[v] = None
+
+        vpq.add_with_priority(source, BIG)
+
+        while not vpq.is_empty():
+            up = vpq.extract_min()
+            [u, ud] = up
+            [ux, uy] = [int(dig) for dig in u.split('|')]
+
+            # for each neighbor v of u still in Q:
+            for vd in ["N", "E", "S", "W"]:
+                [dx, dy] = directions[vd]
+                [vx, vy] = [ux + dx, uy + dy]
+                v = f"{vx}|{vy}"
+
+                print(f"v is : {v}")
+                if not vpq.has(v) and v not in self._graph:
+                    continue
+
+                alt = dist[u][1] + length[v]
+                #print(alt, dist[u][1] + length[v])
+                if alt < dist[v][1]:
+                    #print(f"setting dist / prev for {v}")
+                    dist[v] = [v, alt]
+                    prev[v] = u
+                    vpq.decrease_priority(v, alt)
+
+        return dist, prev
+
     def min_path(self, prev=[], source="0|0", target="9|9"):
         s = []
         u = target
 
         if prev[u] or u == source:
-            while u:
+            while u and u in prev:
                 s.append(u)
                 u = prev[u]
 
@@ -152,3 +201,46 @@ class Graph(object):
 
     def __str__(self):
         return f"Graph({dict(self._graph)})"
+
+class PriorityQueue(object):
+    """ Priority Queue with 3 basic operations for Dijkstra's algorithm. """
+
+    def __init__(self):
+        self._q = {}
+        self._min = None
+        self._len = 0
+
+    def has(self, key):
+        return key in self._q
+
+    def is_empty(self):
+        return self._len == 0
+
+    def find_new_min(self):
+        if self._len > 0:
+            m =  min(self._q.values(), key=lambda dp: dp[1])
+            self._min = m
+        else:
+            self._min = None
+
+    def add_with_priority(self, key, value):
+        if key not in self._q:
+            self._len += 1
+
+        self._q[key] = [key, value]
+
+        if self._min is None or  value < self._min[1]:
+            self._min = [key, value]
+
+
+    def extract_min(self):
+        ex_min = self._min
+        del self._q[ex_min[0]]
+        self._len -= 1
+        self.find_new_min()
+        print(self._min, self._len, ex_min)
+        return ex_min
+
+    def decrease_priority(self, key, value):
+        self.add_with_priority(key, value)
+

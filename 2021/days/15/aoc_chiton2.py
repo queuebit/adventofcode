@@ -82,13 +82,14 @@ paths = []
 
 print()
 print()
-[dist, prev] = g.dijkstra(risk_map, source="0|0")
-#print(dist, prev)
+[dist, prev] = g.dijkstra_pq(risk_map, source="0|0")
+print(dist, prev)
+print(f"EA: {end_at}")
+print(f"DIST: {dist[end_at]}")
 print()
 print()
-min_path = g.min_path(prev, target=end_at)
-print(min_path)
-print(sum([risk_map[cell] for cell in min_path]) - risk_map[start_at])
+#min_path = g.min_path(prev, target=end_at)
+#print(sum([risk_map[cell] for cell in min_path]) - risk_map[start_at])
 #print(min([sum([risk_map[cell] for cell in path.split(",")]) for path in paths]) - 1)
 
 
