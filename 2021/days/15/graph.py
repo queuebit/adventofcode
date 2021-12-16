@@ -93,6 +93,62 @@ class Graph(object):
             else:
                 self.dfs(n, visited[:], paths, rules=rules, end_node=end_node)
 
+    ## https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Pseudocode
+    def dijkstra(self, length, source="0|0"):
+        q = set()
+        dist = {}
+        prev = {}
+
+        BIG = 1*10**10
+
+        directions = {
+                "N": [-1, 0],
+                "E": [0, 1],
+                "S": [1, 0],
+                "W": [0, -1],
+                }
+
+        print(self._graph)
+        for v in self._graph:
+            dist[v] = [v, BIG]
+            prev[v] = None
+            q.add(v)
+        dist[source] = [source, 0]
+
+        while len(q) > 0:
+            up = min(dist.values(), key=lambda dp: dp[1] if dp[0] in q else BIG)
+            # print(up)
+            [u, ud] = up
+            [ux, uy] = [int(dig) for dig in u.split('|')]
+
+            q.remove(u)
+
+            # for each neighbor v of u still in Q:
+            for vd in ["N", "E", "S", "W"]:
+                [dx, dy] = directions[vd]
+                [vx, vy] = [ux + dx, uy + dy]
+                v = f"{vx}|{vy}"
+
+                if v not in q and v not in self._graph:
+                    continue
+
+                alt = dist[u][1] + length[v]
+                if alt < dist[v][1]:
+                    dist[v] = [v, alt]
+                    prev[v] = u
+
+        return dist, prev
+
+    def min_path(self, prev=[], source="0|0", target="9|9"):
+        s = []
+        u = target
+
+        if prev[u] or u == source:
+            while u:
+                s.append(u)
+                u = prev[u]
+
+        return s
 
     def __str__(self):
         return f"Graph({dict(self._graph)})"

@@ -27,29 +27,48 @@ for r, line in enumerate(data):
         risk_map[risk_id] = int(val)
         neighbors = []
         
-        # down neighbor
+        # north neighbor
+        if r > 0:
+            neighbors.append(f"{r-1}|{c}")
+
+        # east neighbor
+        if c < len(row) - 1:
+            neighbors.append(f"{r}|{c+1}")
+
+        # south neighbor
         if r < len(data) - 1:
             neighbors.append(f"{r+1}|{c}")
 
-        # right neighbor
-        if c < len(row) - 1:
-            neighbors.append(f"{r}|{c+1}")
+        # west neighbor
+        if c > 0:
+            neighbors.append(f"{r}|{c-1}")
 
         for n in neighbors:
             connections.append((risk_id, n))
 
+start_at = "0|0"
 end_at = f"{len(data) - 1}|{len(data[0].strip()) - 1}"
 
+
 g = Graph(connections, directed=True)
-print(g.find_path("0|0", end_at))
+#print(g.find_path(start_at, end_at))
 
 visited = []
 paths = []
 
+#g.dfs("0|0", visited, paths, rules="15part1", end_node=end_at)
+#print(len(paths))
+#print(min([sum([risk_map[cell] for cell in path.split(",")]) for path in paths]) - 1)
 
-g.dfs("0|0", visited, paths, rules="15part1", end_node=end_at)
-
-print(len(paths))
-print(min([sum([risk_map[cell] for cell in path.split(",")]) for path in paths]) - 1)
+print()
+print()
+[dist, prev] = g.dijkstra(risk_map, source="0|0")
+#print(dist, prev)
+print()
+print()
+min_path = g.min_path(prev, target=end_at)
+print(min_path)
+print(sum([risk_map[cell] for cell in min_path]) - risk_map[start_at])
+#print(min([sum([risk_map[cell] for cell in path.split(",")]) for path in paths]) - 1)
 
 
