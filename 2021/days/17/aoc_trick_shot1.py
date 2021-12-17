@@ -34,13 +34,15 @@ velocity = (6, 9) # Height = 45
 
 print(f"X={[x1, x2]}, Y={[y1, y2]}")
 target_range = [(x,y) for x in range(x1, x2 + 1) for y in range(y1, y2 + 1)]
+past_pos = (x2, y1)
 print(target_range)
 
-def experiment(v_init, observations={}):
+def experiment(v_init, past_pos, observations={}):
     probe_at = (0, 0)
     positions = [probe_at]
-    steps = 20
+    steps = 1000
     velocity = v_init 
+    (pastx, pasty) = past_pos
 
     for s in range(0, steps):
         (vx, vy) = velocity
@@ -64,20 +66,25 @@ def experiment(v_init, observations={}):
         probe_at = (px, py)
         positions.append(probe_at)
 
+        if px > pastx or py < pasty:
+            return
+
         if probe_at in target_range:
             #print(f"PROBE MADE IT, at step: {s} and position: {probe_at}")
             max_height = max(positions, key=lambda pxy: pxy[1])[1]
             #print(f"MAX HEIGHT: {max_height}")
             observations[max_height] = v_init
 
-rx = [0, 10]
-ry = [-10, 10] 
+gx = int(x2 / 2)
+gy = abs(int(y1 / 2))
+rx = [0, gx]
+ry = [0, gy]
 guesses = [(vx, vy) for vx in range(*rx) for vy in range(*ry)]
 
 observations = {}
 
 for vg in guesses:
-    experiment(vg, observations)
+    experiment(vg, past_pos, observations)
 
 print(observations.keys())
 max_obs = max(observations.keys())
