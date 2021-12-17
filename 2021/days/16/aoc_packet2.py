@@ -148,13 +148,16 @@ if data == dataC:
 syntax = []
 
 def eval(prob):
+    if isinstance(prob, int):
+        return prob 
+
     for p in prob:
         if isinstance(p, int):
             return p
         elif isinstance(p, list):
             return eval(p)
         elif p == "+":
-            return sum(prob[1:])
+            return sum([eval(pn) for pn in prob[1:]])
         elif p == "*":
             return math.prod(prob[1:])
         elif p == "min":
