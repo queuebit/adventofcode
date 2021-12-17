@@ -1,0 +1,118 @@
+#! /usr/local/bin/python3
+
+import sys
+
+year = "2021"
+day = "16"
+problem = "Packet Decoder"
+print(f"--- Day {day}: {problem} ---")
+print(f"Detailed instructions can be found here: https://adventofcode.com/{year}/day/{day}")
+
+print(f"> **Given**: the transmission in hexadecimal")
+print(f"> **Return**: what do you get if you add up the version numbers in all packets?")
+print(f"> **NOTE**: ")
+
+dataA = ["D2FE28\n"]
+dataB = ["38006F45291200\n"]
+dataC = ["EE00D40C823060\n"]
+#data = dataC
+data = sys.stdin.readlines()
+print(f"{data}")
+
+hex_map = {
+        "0": "0000",
+        "1": "0001",
+        "2": "0010",
+        "3": "0011",
+        "4": "0100",
+        "5": "0101",
+        "6": "0110",
+        "7": "0111",
+        "8": "1000",
+        "9": "1001",
+        "A": "1010",
+        "B": "1011",
+        "C": "1100",
+        "D": "1101",
+        "E": "1110",
+        "F": "1111",
+        }
+
+transmission = data[0].strip()
+
+bits = ""
+for c in list(transmission):
+    bits += hex_map[c]
+
+print(bits)
+if data == dataA:
+    print("VVVTTTAAAAABBBBBCCCCC")
+if data == dataB:
+    print("VVVTTTILLLLLLLLLLLLLLLAAAAAAAAAAABBBBBBBBBBBBBBBB")
+if data == dataC:
+    print("VVVTTTILLLLLLLLLLLAAAAAAAAAAABBBBBBBBBBBCCCCCCCCCCC")
+
+vvv = bits[0:3]
+ttt = bits[3:6]
+rem = bits[6:]
+
+print(f"VERSION: {vvv} -> {int(vvv, 2)}")
+print(f"TYPE: {ttt} -> {int(ttt, 2)}")
+
+print(f"REM: {rem}")
+
+if ttt == "100": ## Literal
+    window = 5
+    literal = ""
+    for i in range(0, int(len(rem) / window)):
+        start = i * window
+        end = start + window
+        s = rem[start:end]
+        literal += s[1:]
+        if s[0] == "0":
+            break
+
+    print(f"LITERAL: {literal} -> {int(literal, 2)}")
+
+else: ## Operator
+    length_type_id = rem[0]
+    r2 = rem[1:]
+
+
+    if length_type_id == "0":
+        el = 15
+        lll = r2[0:el]
+        l_subpackets = int(lll, 2)
+        print(f"15 bits -> length of subpackets in bits: {lll} -> {l_subpackets}")
+        r3 = r2[el:]
+        subpackets = r3[0:l_subpackets]
+        print(f"subpackets: {subpackets}")
+    else:
+        el = 11
+        lll = r2[0:el]
+        n_subpackets = int(lll, 2)
+        print(f"11 bits -> number of subpackets is: {lll} -> {n_subpackets}")
+        r3 = r2[el:]
+        subpackets_am = r3[0:]
+        print(f"subpackets among: {subpackets_am}")
+
+
+### Rules
+# - VVV - first three bits are packet version
+# - TTT - next three bits are packet type ID
+
+#### Types
+# - 4 - literal
+# - other - operator
+
+#### Literal
+# - 1/0 - leading bit of each group of 4 (now 5) to say if last or not
+# - \d{4} - 4 bits for each word
+# - combine words to get literal value in decimal
+
+#### Operator
+# - 1/0 - leading bit is length type ID bit
+# - 0 - 15 bits for the **total length in bits** of the sub-packets contained in this packet
+# - 1 - 11 bits for the **number of sub packets** contained by this packet
+
+
