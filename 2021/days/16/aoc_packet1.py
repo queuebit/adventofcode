@@ -39,10 +39,20 @@ hex_map = {
         }
 
 def decode(bits, stack=[]):
+    print("|")
+    print("|___" * len(stack) + bits)
+
+    if len(bits) < 11:
+        return
+
+    used = ""
     vvv = bits[0:3]
     ver = int(vvv, 2)
     ttt = bits[3:6]
     rem = bits[6:]
+    stack.append(ver)
+
+    used = f"{vvv}{ttt}"
 
     print(f"VERSION: {vvv} -> {int(vvv, 2)}")
     print(f"TYPE: {ttt} -> {int(ttt, 2)}")
@@ -56,39 +66,57 @@ def decode(bits, stack=[]):
             start = i * window
             end = start + window
             s = rem[start:end]
+            used += s
             literal += s[1:]
             if s[0] == "0":
                 break
 
         print(f"LITERAL: {literal} -> {int(literal, 2)}")
-        stack.append(ver)
-        return literal
+        return literal, used
 
     else: ## Operator
         length_type_id = rem[0]
         r2 = rem[1:]
+        used += length_type_id
 
 
         if length_type_id == "0":
             el = 15
             lll = r2[0:el]
+            used += lll
+
             l_subpackets = int(lll, 2)
             print(f"15 bits -> length of subpackets in bits: {lll} -> {l_subpackets}")
             r3 = r2[el:]
             subpackets = r3[0:l_subpackets]
             print(f"subpackets: {subpackets}")
-            stack.append(ver)
-            return decode(subpackets, stack)
+
+            s_used = ""
+            subs = []
+            while len(s_used) < l_subpackets:
+                (s_decode, sub_used) = decode(subpackets, stack)
+                subs.append(s_decode)
+                used += sub_used
+                s_used += sub_used
+                subpackets = subpackets[len(sub_used):]
+            return subs, used
         else:
             el = 11
             lll = r2[0:el]
+            used += lll
+
             n_subpackets = int(lll, 2)
             print(f"11 bits -> number of subpackets is: {lll} -> {n_subpackets}")
             r3 = r2[el:]
             subpackets_am = r3[0:]
             print(f"subpackets among: {subpackets_am}")
-            stack.append(ver)
-            return decode(subpackets_am, stack)
+            subs = []
+            for _ in range(0, n_subpackets):
+                (s_decode, sub_used) = decode(subpackets_am, stack)
+                subs.append(s_decode)
+                used += sub_used
+                subpackets_am = subpackets_am[len(sub_used):]
+            return subs, used
 
 transmission = data[0].strip()
 
@@ -96,7 +124,7 @@ bits = ""
 for c in list(transmission):
     bits += hex_map[c]
 
-print(bits)
+print("")
 if data == dataA:
     print("VVVTTTAAAAABBBBBCCCCC")
 if data == dataB:
