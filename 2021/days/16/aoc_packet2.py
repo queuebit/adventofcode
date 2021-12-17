@@ -38,6 +38,15 @@ hex_map = {
         "E": "1110",
         "F": "1111",
         }
+ops_map = {
+        0: "+",
+        1: "*",
+        2: "min",
+        3: "max",
+        5: ">",
+        6: "<",
+        7: "=",
+        }
 
 def decode(bits, stack=[]):
     print("|")
@@ -73,9 +82,11 @@ def decode(bits, stack=[]):
                 break
 
         print(f"LITERAL: {literal} -> {int(literal, 2)}")
-        return literal, used
+        return int(literal, 2), used
 
     else: ## Operator
+        type_id = int(ttt, 2)
+        ops = ops_map[type_id]
         length_type_id = rem[0]
         r2 = rem[1:]
         used += length_type_id
@@ -100,7 +111,7 @@ def decode(bits, stack=[]):
                 used += sub_used
                 s_used += sub_used
                 subpackets = subpackets[len(sub_used):]
-            return subs, used
+            return [ops, *subs], used
         else:
             el = 11
             lll = r2[0:el]
@@ -117,7 +128,7 @@ def decode(bits, stack=[]):
                 subs.append(s_decode)
                 used += sub_used
                 subpackets_am = subpackets_am[len(sub_used):]
-            return subs, used
+            return [ops, *subs], used
 
 transmission = data[0].strip()
 
@@ -135,7 +146,8 @@ if data == dataC:
 
 syntax = []
 
-decode(bits, stack=syntax)
+p, _ = decode(bits, stack=syntax)
+print(f"Problem: {p}")
 
 print(syntax)
 print(sum(syntax))
