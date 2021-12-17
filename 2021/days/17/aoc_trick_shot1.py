@@ -76,7 +76,7 @@ def experiment(v_init, past_pos, observations={}):
             observations[max_height] = v_init
 
 gx = int(x2 / 2)
-gy = abs(int(y1 / 2))
+gy = abs(int(y1))
 rx = [0, gx]
 ry = [0, gy]
 guesses = [(vx, vy) for vx in range(*rx) for vy in range(*ry)]
