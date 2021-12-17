@@ -38,6 +38,58 @@ hex_map = {
         "F": "1111",
         }
 
+def decode(bits, stack=[]):
+    vvv = bits[0:3]
+    ver = int(vvv, 2)
+    ttt = bits[3:6]
+    rem = bits[6:]
+
+    print(f"VERSION: {vvv} -> {int(vvv, 2)}")
+    print(f"TYPE: {ttt} -> {int(ttt, 2)}")
+
+    print(f"REM: {rem}")
+
+    if ttt == "100": ## Literal
+        window = 5
+        literal = ""
+        for i in range(0, int(len(rem) / window)):
+            start = i * window
+            end = start + window
+            s = rem[start:end]
+            literal += s[1:]
+            if s[0] == "0":
+                break
+
+        print(f"LITERAL: {literal} -> {int(literal, 2)}")
+        stack.append(ver)
+        return literal
+
+    else: ## Operator
+        length_type_id = rem[0]
+        r2 = rem[1:]
+
+
+        if length_type_id == "0":
+            el = 15
+            lll = r2[0:el]
+            l_subpackets = int(lll, 2)
+            print(f"15 bits -> length of subpackets in bits: {lll} -> {l_subpackets}")
+            r3 = r2[el:]
+            subpackets = r3[0:l_subpackets]
+            print(f"subpackets: {subpackets}")
+            stack.append(ver)
+            return decode(subpackets, stack)
+        else:
+            el = 11
+            lll = r2[0:el]
+            n_subpackets = int(lll, 2)
+            print(f"11 bits -> number of subpackets is: {lll} -> {n_subpackets}")
+            r3 = r2[el:]
+            subpackets_am = r3[0:]
+            print(f"subpackets among: {subpackets_am}")
+            stack.append(ver)
+            return decode(subpackets_am, stack)
+
 transmission = data[0].strip()
 
 bits = ""
@@ -52,49 +104,12 @@ if data == dataB:
 if data == dataC:
     print("VVVTTTILLLLLLLLLLLAAAAAAAAAAABBBBBBBBBBBCCCCCCCCCCC")
 
-vvv = bits[0:3]
-ttt = bits[3:6]
-rem = bits[6:]
+syntax = []
 
-print(f"VERSION: {vvv} -> {int(vvv, 2)}")
-print(f"TYPE: {ttt} -> {int(ttt, 2)}")
+decode(bits, stack=syntax)
 
-print(f"REM: {rem}")
-
-if ttt == "100": ## Literal
-    window = 5
-    literal = ""
-    for i in range(0, int(len(rem) / window)):
-        start = i * window
-        end = start + window
-        s = rem[start:end]
-        literal += s[1:]
-        if s[0] == "0":
-            break
-
-    print(f"LITERAL: {literal} -> {int(literal, 2)}")
-
-else: ## Operator
-    length_type_id = rem[0]
-    r2 = rem[1:]
-
-
-    if length_type_id == "0":
-        el = 15
-        lll = r2[0:el]
-        l_subpackets = int(lll, 2)
-        print(f"15 bits -> length of subpackets in bits: {lll} -> {l_subpackets}")
-        r3 = r2[el:]
-        subpackets = r3[0:l_subpackets]
-        print(f"subpackets: {subpackets}")
-    else:
-        el = 11
-        lll = r2[0:el]
-        n_subpackets = int(lll, 2)
-        print(f"11 bits -> number of subpackets is: {lll} -> {n_subpackets}")
-        r3 = r2[el:]
-        subpackets_am = r3[0:]
-        print(f"subpackets among: {subpackets_am}")
+print(syntax)
+print(sum(syntax))
 
 
 ### Rules
