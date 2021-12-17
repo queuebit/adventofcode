@@ -1,5 +1,6 @@
 #! /usr/local/bin/python3
 
+import math
 import sys
 
 year = "2021"
@@ -146,8 +147,30 @@ if data == dataC:
 
 syntax = []
 
+def eval(prob):
+    for p in prob:
+        if isinstance(p, int):
+            return p
+        elif isinstance(p, list):
+            return eval(p)
+        elif p == "+":
+            return sum(prob[1:])
+        elif p == "*":
+            return math.prod(prob[1:])
+        elif p == "min":
+            return min(prob[1:])
+        elif p == "max":
+            return max(prob[1:])
+        elif p == "<":
+            return 1 if prob[1] < prob[2] else 0 
+        elif p == ">":
+            return 1 if prob[1] > prob[2] else 0 
+        elif p == "=":
+            return 1 if prob[1] == prob[2] else 0 
+
 p, _ = decode(bits, stack=syntax)
 print(f"Problem: {p}")
+print(f"Eval: {eval(p)}")
 
 print(syntax)
 print(sum(syntax))
