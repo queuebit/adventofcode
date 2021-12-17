@@ -151,32 +151,36 @@ def eval(prob):
     if isinstance(prob, int):
         return prob 
 
+    eval_each = lambda args: [eval(arg) for arg in args]
+
     for p in prob:
         if isinstance(p, int):
             return p
         elif isinstance(p, list):
             return eval(p)
         elif p == "+":
-            return sum([eval(pn) for pn in prob[1:]])
+            return sum(eval_each(prob[1:]))
         elif p == "*":
-            return math.prod(prob[1:])
+            return math.prod(eval_each(prob[1:]))
         elif p == "min":
-            return min(prob[1:])
+            return min(eval_each(prob[1:]))
         elif p == "max":
-            return max(prob[1:])
+            return max(eval_each(prob[1:]))
         elif p == "<":
-            return 1 if prob[1] < prob[2] else 0 
+            return 1 if eval(prob[1]) < eval(prob[2]) else 0 
         elif p == ">":
-            return 1 if prob[1] > prob[2] else 0 
+            return 1 if eval(prob[1]) > eval(prob[2]) else 0 
         elif p == "=":
-            return 1 if prob[1] == prob[2] else 0 
+            return 1 if eval(prob[1]) == eval(prob[2]) else 0 
 
 p, _ = decode(bits, stack=syntax)
-print(f"Problem: {p}")
-print(f"Eval: {eval(p)}")
 
 print(syntax)
 print(sum(syntax))
+
+print()
+print(f"Problem: {p}")
+print(f"Eval: {eval(p)}")
 
 
 ### Rules
