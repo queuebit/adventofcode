@@ -1,0 +1,2 @@
+### References
+- [How to install TypeScript](https://www.executeprogram.com/courses/typescript-basics/articles/how-to-install-typescript)
