@@ -1,0 +1,22 @@
+- [ ] Change node folder with folder changes #node
+- [ ] Typescript getting started #typescript
+- [ ] Typescript types #typescript
+- [ ] Mocha / Unit tests #testing
+- [ ] Auto-run folder unit tests on save #testing
+- [ ] VSCode #administrivia
+
+-----
+
+### Notes
+- [x] Node binary executables (node, tsc, ts-node) #node
+	```
+	~/learn/adventofcode/2022 % npx ts-node
+	> 3 * 6
+	18
+	```
+- [x] Run tsc binary to convert TypeScript to js
+	```
+	~/learn/adventofcode/2022/days/01 % npx tsc --noImplicitReturns --noFallthroughCasesInSwitch --strict --noUnusedLocals aoc_cc_p1.ts
+	~/learn/adventofcode/2022/days/01 % node aoc_cc_p1.js                                                                          
+	18
+	```

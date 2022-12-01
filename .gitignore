@@ -4,3 +4,4 @@ puzzle.out
 puzzle2.out
 
 __pycache__/
+node_modules/
