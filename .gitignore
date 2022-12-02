@@ -1,6 +1,8 @@
 puzzle.in
+puzzle1.in
 puzzle2.in
 puzzle.out
+puzzle1.out
 puzzle2.out
 
 __pycache__/
