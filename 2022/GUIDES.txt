@@ -1,3 +1,10 @@
 ### References
 - 1. [How to install TypeScript](https://www.executeprogram.com/courses/typescript-basics/articles/how-to-install-typescript)
 - 2. [How to use TypeScript in Node.js](https://www.executeprogram.com/courses/typescript-basics/articles/how-to-use-typescript-in-node-js)
+- 3. [Is TypeScript Better Than JavaScript?](https://www.executeprogram.com/courses/typescript-basics/articles/is-typescript-better-than-javascript)
+- 4. [How to convert a string to a number in TypeScript](https://www.executeprogram.com/courses/typescript-basics/articles/how-to-convert-a-string-to-a-number-in-typescript)
+
+### MOAR
+- https://www.executeprogram.com/blog/are-tests-necessary-in-typescript
+- https://www.executeprogram.com/blog/porting-a-react-frontend-to-typescript
+- https://www.executeprogram.com/blog/porting-to-typescript-solved-our-api-woes

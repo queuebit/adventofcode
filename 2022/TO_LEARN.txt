@@ -20,3 +20,5 @@
 	~/learn/adventofcode/2022/days/01 % node aoc_cc_p1.js                                                                          
 	18
 	```
+- [x] mjs vs js file extensions
+	- https://stackoverflow.com/a/57492606
