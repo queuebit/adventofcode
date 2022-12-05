@@ -1,25 +1,30 @@
-import * as readline from "readline";
-import { stdin as input, stdout as output } from "process";
+const readline = require("readline");
 
-type RL = readline.Interface;
-type SomeFunction = (rl: RL) => (line: string) => string;
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false,
+});
 
-const elfAppetite: SomeFunction = (rl) => (line) => {
-  return line;
-};
+let elves = 0;
+let elfDiet = 0;
+let appetites: number[] = [];
 
-export const main = (): void => {
-  const rl = readline.createInterface({ input, output });
+rl.on("line", (line: string) => {
+  console.log(line);
+  if (line.trim() === "") {
+    elves += 1;
+    appetites.push(elfDiet);
+    console.log(`Elf #${elves} Diet: ${elfDiet}`);
+    elfDiet = 0;
+  } else {
+    elfDiet += parseInt(line.trim(), 10);
+  }
+});
 
-  console.log("Please insert the data.");
-
-  let cals: string[] = [];
-
-  // reads line by line and calls someFunction(rl)(line)
-  rl.on("line", () => {
-    const appetite: string = elfAppetite()(rl);
-    cals.push(appetite);
-  });
-};
-
-main();
+rl.once("close", () => {
+  console.log("done");
+  console.log(appetites);
+  console.log(Math.max(...appetites));
+  // end of input
+});
