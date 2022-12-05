@@ -1,3 +1,6 @@
+- [ ] Enumberables in ts
+- [ ] state machines in ts
+- [ ] typescript tsc trigger on save
 - [ ] Change node folder with folder changes #node
 - [ ] Typescript getting started #typescript
 - [ ] Typescript types #typescript
