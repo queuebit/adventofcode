@@ -10,19 +10,28 @@ const rl = readline.createInterface({
 const range = (elfRange) => {
   [start, end] = elfRange.split("-").map(Number);
   let r = new Set();
-  for (let i = start; i < end; i++) {
+  for (let i = start; i <= end; i++) {
     r.add(i);
   }
   return r;
 };
 const fullyContained = (a, b) => {
   let intersection = new Set([...a].filter((x) => b.has(x)));
-  return [...intersection].length === [...a].length;
+  return intersection.size === a.size;
 };
 let fullyContainedPairs = 0;
 rl.on("line", (line) => {
   [elfA, elfB] = line.split(",").map(range);
+  /* That's not the right answer; your answer is too high.
+  If you're stuck, make sure you're using the full input data;
+  there are also some general tips on the about page, or you can ask for hints on the subreddit.
+  Please wait one minute before trying again. (You guessed 632.) [Return to Day 4] */
+  /* That's not the right answer; your answer is too low.
+  If you're stuck, make sure you're using the full input data;
+  there are also some general tips on the about page, or you can ask for hints on the subreddit.
+  Please wait one minute before trying again. (You guessed 403.) [Return to Day 4] */
   if (fullyContained(elfA, elfB) || fullyContained(elfB, elfA)) {
+    // console.log({ elfA, elfB, sA: elfA.size, sB: elfB.size });
     fullyContainedPairs += 1;
   }
 });
