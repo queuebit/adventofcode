@@ -25,16 +25,27 @@ type FileInfo = {
 
 let activeCommand = COMMANDS.noop;
 let wd = "?";
-let fs: FileInfo[] = [
+let fs: Set<FileInfo> = new Set([
   { name: "/", filetype: FILETYPES.directory, filesize: 0, parent: "" },
-];
+]);
+
+const findParent = (wd: string) => {
+  return Array.from(fs).filter(
+    (f) => f.filetype == FILETYPES.directory && f.name === wd
+  )[0].parent;
+};
 
 const handleCommand = (command: string) => {
   console.log(`COMMAND: ${command}`);
   if (command.startsWith("cd")) {
     const [_, path] = command.split(" ");
-    wd = path;
     activeCommand = COMMANDS.cd;
+    if (path === "..") {
+      wd = findParent(wd);
+      console.log(`.. PARENT IS: ${wd}`);
+    } else {
+      wd = path;
+    }
   } else if (command.startsWith("ls")) {
     activeCommand = COMMANDS.ls;
   }
@@ -47,7 +58,7 @@ const handleInfo = (info: string) => {
   } else if (activeCommand === COMMANDS.ls) {
     if (info.startsWith("dir")) {
       const [_, dirName] = info.split(" ");
-      fs.push({
+      fs.add({
         name: dirName,
         filetype: FILETYPES.directory,
         filesize: 0,
@@ -56,7 +67,7 @@ const handleInfo = (info: string) => {
     } else {
       const [strSize, filename] = info.split(" ");
       const filesize = Number(strSize);
-      fs.push({
+      fs.add({
         name: filename,
         filetype: FILETYPES.file,
         filesize: filesize,
@@ -70,7 +81,7 @@ const dirSizes = () => {
   let ds: { [key: string]: number } = {};
 
   // handle files
-  fs.reduceRight((prev, cur) => {
+  Array.from(fs).reduce((prev, cur) => {
     if (!Object.keys(prev).includes(cur.parent)) {
       prev[cur.parent] = 0;
     }
@@ -83,12 +94,12 @@ const dirSizes = () => {
     if (d === "") {
       return;
     }
-    let fsd = fs.filter(
+    let fsd = Array.from(fs).filter(
       (f) => f.filetype == FILETYPES.directory && f.name === d
     )[0];
     while (fsd.parent !== "") {
       ds[fsd.parent] += ds[d];
-      fsd = fs.filter(
+      fsd = Array.from(fs).filter(
         (f) => f.filetype == FILETYPES.directory && f.name === fsd.parent
       )[0];
     }
@@ -106,9 +117,16 @@ rl.on("line", (line: string) => {
 });
 
 rl.once("close", () => {
-  console.log(fs);
+  // console.log(fs);
+  console.log(fs.size);
   const ds = dirSizes();
-  console.log(ds);
+  // console.log(ds);
   const smallDirs = Object.values(ds).filter((x) => x < 100000);
   console.log(smallDirs.reduce((a, b) => a + b, 0));
+  /* That's not the right answer; your answer is too low.
+  If you're stuck, make sure you're using the full input data; there are also some general tips on the about page, 
+  or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 774391.) */
+  /* That's not the right answer; your answer is too low.
+  If you're stuck, make sure you're using the full input data; there are also some general tips on the about page,
+  or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 756536.) [Return to Day 7] */
 });

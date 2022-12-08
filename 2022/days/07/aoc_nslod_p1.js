@@ -17,15 +17,24 @@ var FILETYPES = {
 };
 var activeCommand = COMMANDS.noop;
 var wd = "?";
-var fs = [
+var fs = new Set([
     { name: "/", filetype: FILETYPES.directory, filesize: 0, parent: "" },
-];
+]);
+var findParent = function (wd) {
+    return Array.from(fs).filter(function (f) { return f.filetype == FILETYPES.directory && f.name === wd; })[0].parent;
+};
 var handleCommand = function (command) {
     console.log("COMMAND: ".concat(command));
     if (command.startsWith("cd")) {
         var _a = command.split(" "), _ = _a[0], path = _a[1];
-        wd = path;
         activeCommand = COMMANDS.cd;
+        if (path === "..") {
+            wd = findParent(wd);
+            console.log(".. PARENT IS: ".concat(wd));
+        }
+        else {
+            wd = path;
+        }
     }
     else if (command.startsWith("ls")) {
         activeCommand = COMMANDS.ls;
@@ -39,7 +48,7 @@ var handleInfo = function (info) {
     else if (activeCommand === COMMANDS.ls) {
         if (info.startsWith("dir")) {
             var _a = info.split(" "), _ = _a[0], dirName = _a[1];
-            fs.push({
+            fs.add({
                 name: dirName,
                 filetype: FILETYPES.directory,
                 filesize: 0,
@@ -49,7 +58,7 @@ var handleInfo = function (info) {
         else {
             var _b = info.split(" "), strSize = _b[0], filename = _b[1];
             var filesize = Number(strSize);
-            fs.push({
+            fs.add({
                 name: filename,
                 filetype: FILETYPES.file,
                 filesize: filesize,
@@ -61,7 +70,7 @@ var handleInfo = function (info) {
 var dirSizes = function () {
     var ds = {};
     // handle files
-    fs.reduceRight(function (prev, cur) {
+    Array.from(fs).reduce(function (prev, cur) {
         if (!Object.keys(prev).includes(cur.parent)) {
             prev[cur.parent] = 0;
         }
@@ -73,10 +82,10 @@ var dirSizes = function () {
         if (d === "") {
             return;
         }
-        var fsd = fs.filter(function (f) { return f.filetype == FILETYPES.directory && f.name === d; })[0];
+        var fsd = Array.from(fs).filter(function (f) { return f.filetype == FILETYPES.directory && f.name === d; })[0];
         while (fsd.parent !== "") {
             ds[fsd.parent] += ds[d];
-            fsd = fs.filter(function (f) { return f.filetype == FILETYPES.directory && f.name === fsd.parent; })[0];
+            fsd = Array.from(fs).filter(function (f) { return f.filetype == FILETYPES.directory && f.name === fsd.parent; })[0];
         }
     });
     return ds;
@@ -90,9 +99,13 @@ rl.on("line", function (line) {
     }
 });
 rl.once("close", function () {
-    console.log(fs);
+    // console.log(fs);
+    console.log(fs.size);
     var ds = dirSizes();
-    console.log(ds);
+    // console.log(ds);
     var smallDirs = Object.values(ds).filter(function (x) { return x < 100000; });
     console.log(smallDirs.reduce(function (a, b) { return a + b; }, 0));
+    /* That's not the right answer; your answer is too low.
+    If you're stuck, make sure you're using the full input data; there are also some general tips on the about page,
+    or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 774391.) */
 });
