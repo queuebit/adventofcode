@@ -60,13 +60,26 @@ var handleInfo = function (info) {
 };
 var dirSizes = function () {
     var ds = {};
-    return fs.reduceRight(function (prev, cur) {
+    // handle files
+    fs.reduceRight(function (prev, cur) {
         if (!Object.keys(prev).includes(cur.parent)) {
             prev[cur.parent] = 0;
         }
         prev[cur.parent] += cur.filesize;
         return prev;
     }, ds);
+    // handle subdirectories
+    Object.keys(ds).forEach(function (d) {
+        if (d === "") {
+            return;
+        }
+        var fsd = fs.filter(function (f) { return f.filetype == FILETYPES.directory && f.name === d; })[0];
+        while (fsd.parent !== "") {
+            ds[fsd.parent] += ds[d];
+            fsd = fs.filter(function (f) { return f.filetype == FILETYPES.directory && f.name === fsd.parent; })[0];
+        }
+    });
+    return ds;
 };
 rl.on("line", function (line) {
     if (line.startsWith("$ ")) {

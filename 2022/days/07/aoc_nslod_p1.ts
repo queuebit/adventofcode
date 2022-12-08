@@ -68,13 +68,33 @@ const handleInfo = (info: string) => {
 
 const dirSizes = () => {
   let ds: { [key: string]: number } = {};
-  return fs.reduceRight((prev, cur) => {
+
+  // handle files
+  fs.reduceRight((prev, cur) => {
     if (!Object.keys(prev).includes(cur.parent)) {
       prev[cur.parent] = 0;
     }
     prev[cur.parent] += cur.filesize;
     return prev;
   }, ds);
+
+  // handle subdirectories
+  Object.keys(ds).forEach((d) => {
+    if (d === "") {
+      return;
+    }
+    let fsd = fs.filter(
+      (f) => f.filetype == FILETYPES.directory && f.name === d
+    )[0];
+    while (fsd.parent !== "") {
+      ds[fsd.parent] += ds[d];
+      fsd = fs.filter(
+        (f) => f.filetype == FILETYPES.directory && f.name === fsd.parent
+      )[0];
+    }
+  });
+
+  return ds;
 };
 
 rl.on("line", (line: string) => {
