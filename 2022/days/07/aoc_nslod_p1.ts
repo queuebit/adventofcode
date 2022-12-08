@@ -25,54 +25,81 @@ type FileInfo = {
 
 let activeCommand = COMMANDS.noop;
 let wd = "?";
-let fs: Set<FileInfo> = new Set([
+let fs: FileInfo[] = [
   { name: "/", filetype: FILETYPES.directory, filesize: 0, parent: "" },
-]);
+];
 
+const fsInfo = (d: string) => {
+  return Array.from(fs).filter((f) => f.name === d);
+};
+const fsChildren = (p: string) => {
+  return Array.from(fs).filter((f) => f.parent === p);
+};
 const findParent = (wd: string) => {
-  return Array.from(fs).filter(
+  const fsParent = Array.from(fs).filter(
     (f) => f.filetype == FILETYPES.directory && f.name === wd
-  )[0].parent;
+  );
+  if (fsParent.length === 0) {
+    // console.log(fs.filter((f) => f.filetype === FILETYPES.directory));
+    return fsParent[0].parent;
+  } else {
+    return fsParent[0].parent;
+  }
+};
+
+const isInFS = (name: string, filetype: number, parent: string) => {
+  return (
+    Array.from(fs).filter(
+      (f) => f.name === name && f.filetype === filetype && f.parent === parent
+    ).length > 0
+  );
 };
 
 const handleCommand = (command: string) => {
-  console.log(`COMMAND: ${command}`);
+  // console.log(`COMMAND: ${command}`);
   if (command.startsWith("cd")) {
     const [_, path] = command.split(" ");
     activeCommand = COMMANDS.cd;
     if (path === "..") {
       wd = findParent(wd);
-      console.log(`.. PARENT IS: ${wd}`);
     } else {
       wd = path;
     }
   } else if (command.startsWith("ls")) {
     activeCommand = COMMANDS.ls;
   }
+  if (command.includes("gbzfpfq")) {
+    console.log(`DEBUG: ${command} -- wd: ${wd}`);
+  }
 };
 
 const handleInfo = (info: string) => {
-  console.log(`INFO: ${info}`);
+  // console.log(`INFO: ${info}`);
   if (activeCommand === COMMANDS.cd) {
     console.warn("SYNTAX ERROR");
   } else if (activeCommand === COMMANDS.ls) {
     if (info.startsWith("dir")) {
       const [_, dirName] = info.split(" ");
-      fs.add({
-        name: dirName,
-        filetype: FILETYPES.directory,
-        filesize: 0,
-        parent: wd,
-      });
+      if (!isInFS(dirName, FILETYPES.directory, wd)) {
+        fs.push({
+          name: dirName,
+          filetype: FILETYPES.directory,
+          filesize: 0,
+          parent: wd,
+        });
+      }
     } else {
+      console.log(info);
       const [strSize, filename] = info.split(" ");
-      const filesize = Number(strSize);
-      fs.add({
-        name: filename,
-        filetype: FILETYPES.file,
-        filesize: filesize,
-        parent: wd,
-      });
+      if (!isInFS(filename, FILETYPES.file, wd)) {
+        const filesize = Number(strSize);
+        fs.push({
+          name: filename,
+          filetype: FILETYPES.file,
+          filesize: filesize,
+          parent: wd,
+        });
+      }
     }
   }
 };
@@ -90,6 +117,8 @@ const dirSizes = () => {
   }, ds);
 
   // handle subdirectories
+  console.log(fsInfo("gbzfpfq"));
+  console.log(fsChildren("gbzfpfq"));
   Object.keys(ds).forEach((d) => {
     if (d === "") {
       return;
@@ -98,6 +127,9 @@ const dirSizes = () => {
       (f) => f.filetype == FILETYPES.directory && f.name === d
     )[0];
     while (fsd.parent !== "") {
+      if (d === "gbzfpfq") {
+        console.log(ds[d]);
+      }
       ds[fsd.parent] += ds[d];
       fsd = Array.from(fs).filter(
         (f) => f.filetype == FILETYPES.directory && f.name === fsd.parent
@@ -117,11 +149,15 @@ rl.on("line", (line: string) => {
 });
 
 rl.once("close", () => {
-  // console.log(fs);
-  console.log(fs.size);
+  // console.log(JSON.stringify(fs.filter((f) => f.filetype === FILETYPES.file)));
+  // console.log(
+  //   JSON.stringify(fs.filter((f) => f.filetype === FILETYPES.directory))
+  // );
+  // console.log(fs.length);
   const ds = dirSizes();
-  // console.log(ds);
+  console.log(ds);
   const smallDirs = Object.values(ds).filter((x) => x < 100000);
+  console.log(smallDirs);
   console.log(smallDirs.reduce((a, b) => a + b, 0));
   /* That's not the right answer; your answer is too low.
   If you're stuck, make sure you're using the full input data; there are also some general tips on the about page, 
@@ -129,4 +165,7 @@ rl.once("close", () => {
   /* That's not the right answer; your answer is too low.
   If you're stuck, make sure you're using the full input data; there are also some general tips on the about page,
   or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 756536.) [Return to Day 7] */
+  /* That's not the right answer; your answer is too low.
+  If you're stuck, make sure you're using the full input data; there are also some general tips on the about page,
+  or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 450644.) [Return to Day 7] */
 });
