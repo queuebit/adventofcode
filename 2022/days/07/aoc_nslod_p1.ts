@@ -68,7 +68,7 @@ const handleCommand = (command: string) => {
   } else if (command.startsWith("ls")) {
     activeCommand = COMMANDS.ls;
   }
-  if (command.includes("gbzfpfq")) {
+  if (command.includes("zdvj")) {
     console.log(`DEBUG: ${command} -- wd: ${wd}`);
   }
 };
@@ -117,8 +117,8 @@ const dirSizes = () => {
   }, ds);
 
   // handle subdirectories
-  console.log(fsInfo("gbzfpfq"));
-  console.log(fsChildren("gbzfpfq"));
+  console.log(fsInfo("zdvj"));
+  console.log(fsChildren("zdvj"));
   Object.keys(ds).forEach((d) => {
     if (d === "") {
       return;

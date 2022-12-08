@@ -54,7 +54,7 @@ var handleCommand = function (command) {
     else if (command.startsWith("ls")) {
         activeCommand = COMMANDS.ls;
     }
-    if (command.includes("gbzfpfq")) {
+    if (command.includes("zdvj")) {
         console.log("DEBUG: ".concat(command, " -- wd: ").concat(wd));
     }
 };
@@ -101,8 +101,8 @@ var dirSizes = function () {
         return prev;
     }, ds);
     // handle subdirectories
-    console.log(fsInfo("gbzfpfq"));
-    console.log(fsChildren("gbzfpfq"));
+    console.log(fsInfo("zdvj"));
+    console.log(fsChildren("zdvj"));
     Object.keys(ds).forEach(function (d) {
         if (d === "") {
             return;
