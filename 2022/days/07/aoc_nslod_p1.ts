@@ -24,9 +24,14 @@ type FileInfo = {
 };
 
 let activeCommand = COMMANDS.noop;
-let wd = "?";
+let wd = "";
 let fs: FileInfo[] = [
-  { name: "/", filetype: FILETYPES.directory, filesize: 0, parent: "" },
+  {
+    name: "/",
+    filetype: FILETYPES.directory,
+    filesize: 0,
+    parent: "",
+  },
 ];
 
 const fsInfo = (d: string) => {
@@ -55,21 +60,25 @@ const isInFS = (name: string, filetype: number, parent: string) => {
   );
 };
 
+const parentPath = (p: string) => {
+  let pathComponents = p.split("/");
+  pathComponents.pop();
+  return pathComponents.join("/");
+};
 const handleCommand = (command: string) => {
   // console.log(`COMMAND: ${command}`);
   if (command.startsWith("cd")) {
     const [_, path] = command.split(" ");
     activeCommand = COMMANDS.cd;
     if (path === "..") {
-      wd = findParent(wd);
+      wd = parentPath(wd);
+    } else if (path === "/") {
+      wd = "/";
     } else {
-      wd = path;
+      wd += wd === "/" ? path : `/${path}`;
     }
   } else if (command.startsWith("ls")) {
     activeCommand = COMMANDS.ls;
-  }
-  if (command.includes("zdvj")) {
-    console.log(`DEBUG: ${command} -- wd: ${wd}`);
   }
 };
 
@@ -89,7 +98,6 @@ const handleInfo = (info: string) => {
         });
       }
     } else {
-      console.log(info);
       const [strSize, filename] = info.split(" ");
       if (!isInFS(filename, FILETYPES.file, wd)) {
         const filesize = Number(strSize);
@@ -117,23 +125,18 @@ const dirSizes = () => {
   }, ds);
 
   // handle subdirectories
-  console.log(fsInfo("zdvj"));
-  console.log(fsChildren("zdvj"));
+  // console.log(fsInfo("zdvj"));
+  // console.log(fsChildren("zdvj"));
+  console.log(ds);
   Object.keys(ds).forEach((d) => {
-    if (d === "") {
+    if (d === "" || d === "/") {
       return;
     }
-    let fsd = Array.from(fs).filter(
-      (f) => f.filetype == FILETYPES.directory && f.name === d
-    )[0];
-    while (fsd.parent !== "") {
-      if (d === "gbzfpfq") {
-        console.log(ds[d]);
-      }
-      ds[fsd.parent] += ds[d];
-      fsd = Array.from(fs).filter(
-        (f) => f.filetype == FILETYPES.directory && f.name === fsd.parent
-      )[0];
+    let pp = parentPath(d);
+    console.log({ d, pp });
+    while (pp !== "") {
+      ds[pp] += ds[d];
+      pp = parentPath(pp);
     }
   });
 
@@ -153,7 +156,7 @@ rl.once("close", () => {
   // console.log(
   //   JSON.stringify(fs.filter((f) => f.filetype === FILETYPES.directory))
   // );
-  // console.log(fs.length);
+  console.log(fs.length);
   const ds = dirSizes();
   console.log(ds);
   const smallDirs = Object.values(ds).filter((x) => x < 100000);

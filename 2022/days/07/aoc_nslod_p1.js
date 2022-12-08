@@ -16,9 +16,14 @@ var FILETYPES = {
     file: 1
 };
 var activeCommand = COMMANDS.noop;
-var wd = "?";
+var wd = "";
 var fs = [
-    { name: "/", filetype: FILETYPES.directory, filesize: 0, parent: "" },
+    {
+        name: "/",
+        filetype: FILETYPES.directory,
+        filesize: 0,
+        parent: ""
+    },
 ];
 var fsInfo = function (d) {
     return Array.from(fs).filter(function (f) { return f.name === d; });
@@ -39,23 +44,28 @@ var findParent = function (wd) {
 var isInFS = function (name, filetype, parent) {
     return (Array.from(fs).filter(function (f) { return f.name === name && f.filetype === filetype && f.parent === parent; }).length > 0);
 };
+var parentPath = function (p) {
+    var pathComponents = p.split("/");
+    pathComponents.pop();
+    return pathComponents.join("/");
+};
 var handleCommand = function (command) {
     // console.log(`COMMAND: ${command}`);
     if (command.startsWith("cd")) {
         var _a = command.split(" "), _ = _a[0], path = _a[1];
         activeCommand = COMMANDS.cd;
         if (path === "..") {
-            wd = findParent(wd);
+            wd = parentPath(wd);
+        }
+        else if (path === "/") {
+            wd = "/";
         }
         else {
-            wd = path;
+            wd += wd === "/" ? path : "/".concat(path);
         }
     }
     else if (command.startsWith("ls")) {
         activeCommand = COMMANDS.ls;
-    }
-    if (command.includes("zdvj")) {
-        console.log("DEBUG: ".concat(command, " -- wd: ").concat(wd));
     }
 };
 var handleInfo = function (info) {
@@ -76,7 +86,6 @@ var handleInfo = function (info) {
             }
         }
         else {
-            console.log(info);
             var _b = info.split(" "), strSize = _b[0], filename = _b[1];
             if (!isInFS(filename, FILETYPES.file, wd)) {
                 var filesize = Number(strSize);
@@ -101,19 +110,18 @@ var dirSizes = function () {
         return prev;
     }, ds);
     // handle subdirectories
-    console.log(fsInfo("zdvj"));
-    console.log(fsChildren("zdvj"));
+    // console.log(fsInfo("zdvj"));
+    // console.log(fsChildren("zdvj"));
+    console.log(ds);
     Object.keys(ds).forEach(function (d) {
-        if (d === "") {
+        if (d === "" || d === "/") {
             return;
         }
-        var fsd = Array.from(fs).filter(function (f) { return f.filetype == FILETYPES.directory && f.name === d; })[0];
-        while (fsd.parent !== "") {
-            if (d === "gbzfpfq") {
-                console.log(ds[d]);
-            }
-            ds[fsd.parent] += ds[d];
-            fsd = Array.from(fs).filter(function (f) { return f.filetype == FILETYPES.directory && f.name === fsd.parent; })[0];
+        var pp = parentPath(d);
+        console.log({ d: d, pp: pp });
+        while (pp !== "") {
+            ds[pp] += ds[d];
+            pp = parentPath(pp);
         }
     });
     return ds;
