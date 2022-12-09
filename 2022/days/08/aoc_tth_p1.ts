@@ -43,21 +43,19 @@ rl.once("close", () => {
         const treeHeight = treeRows[c][r];
 
         const leftVals = treeRows[c].slice(0, r);
-        const leftView = !(leftVals.filter((t) => t >= treeHeight).length > 0);
+        const leftView = leftVals.filter((t) => t >= treeHeight).length === 0;
         // console.log({ key, treeHeight, leftVals, leftView });
 
         const rightVals = treeRows[c].slice(r + 1);
-        const rightView = !(
-          rightVals.filter((t) => t >= treeHeight).length > 0
-        );
+        const rightView = rightVals.filter((t) => t >= treeHeight).length === 0;
         // console.log({ key, treeHeight, rightVals, rightView });
 
         const upVals = treeCols[r].slice(0, c);
-        const upView = !(upVals.filter((t) => t >= treeHeight).length > 0);
+        const upView = upVals.filter((t) => t >= treeHeight).length === 0;
         // console.log({ key, treeHeight, upVals, upView });
 
         const downVals = treeCols[r].slice(c + 1);
-        const downView = !(downVals.filter((t) => t >= treeHeight).length > 0);
+        const downView = downVals.filter((t) => t >= treeHeight).length === 0;
         // console.log({ key, treeHeight, downVals, downView });
 
         inViewMap[c].push(leftView || rightView || upView || downView);

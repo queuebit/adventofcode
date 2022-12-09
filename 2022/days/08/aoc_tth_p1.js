@@ -39,16 +39,16 @@ rl.once("close", function () {
             else {
                 var treeHeight_1 = treeRows[c][r];
                 var leftVals = treeRows[c].slice(0, r);
-                var leftView = !(leftVals.filter(function (t) { return t >= treeHeight_1; }).length > 0);
+                var leftView = leftVals.filter(function (t) { return t >= treeHeight_1; }).length === 0;
                 // console.log({ key, treeHeight, leftVals, leftView });
                 var rightVals = treeRows[c].slice(r + 1);
-                var rightView = !(rightVals.filter(function (t) { return t >= treeHeight_1; }).length > 0);
+                var rightView = rightVals.filter(function (t) { return t >= treeHeight_1; }).length === 0;
                 // console.log({ key, treeHeight, rightVals, rightView });
                 var upVals = treeCols[r].slice(0, c);
-                var upView = !(upVals.filter(function (t) { return t >= treeHeight_1; }).length > 0);
+                var upView = upVals.filter(function (t) { return t >= treeHeight_1; }).length === 0;
                 // console.log({ key, treeHeight, upVals, upView });
                 var downVals = treeCols[r].slice(c + 1);
-                var downView = !(downVals.filter(function (t) { return t >= treeHeight_1; }).length > 0);
+                var downView = downVals.filter(function (t) { return t >= treeHeight_1; }).length === 0;
                 // console.log({ key, treeHeight, downVals, downView });
                 inViewMap[c].push(leftView || rightView || upView || downView);
                 inViewLookup[key] = leftView || rightView || upView || downView;
@@ -64,4 +64,7 @@ rl.once("close", function () {
     /* That's not the right answer; your answer is too low.
     If you're stuck, make sure you're using the full input data; there are also some general tips on the about page,
     or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 1613.) [Return to Day 8] */
+    /* That's not the right answer; your answer is too low.
+    If you're stuck, make sure you're using the full input data; there are also some general tips on the about page,
+    or you can ask for hints on the subreddit. Please wait one minute before trying again. (You guessed 1611.) [Return to Day 8] */
 });
