@@ -31,7 +31,7 @@ rl.once("close", function () {
     for (var c = 0; c < cs; c++) {
         inViewMap.push([]);
         var _loop_1 = function (r) {
-            var key = "".concat(c).concat(r);
+            var key = "".concat(c, "-").concat(r);
             if (r === 0 || c === 0 || r === rs - 1 || c === cs - 1) {
                 inViewMap[c].push(true);
                 inViewLookup[key] = true;
@@ -60,6 +60,7 @@ rl.once("close", function () {
     }
     console.log(inViewMap);
     console.log({ rs: rs, cs: cs });
+    console.log(Object.keys(inViewLookup).length);
     console.log(Object.values(inViewLookup).filter(function (viewable) { return viewable; }).length);
     /* That's not the right answer; your answer is too low.
     If you're stuck, make sure you're using the full input data; there are also some general tips on the about page,

@@ -35,7 +35,7 @@ rl.once("close", () => {
   for (let c = 0; c < cs; c++) {
     inViewMap.push([]);
     for (let r = 0; r < rs; r++) {
-      const key = `${c}${r}`;
+      const key = `${c}-${r}`;
       if (r === 0 || c === 0 || r === rs - 1 || c === cs - 1) {
         inViewMap[c].push(true);
         inViewLookup[key] = true;
@@ -65,6 +65,7 @@ rl.once("close", () => {
   }
   console.log(inViewMap);
   console.log({ rs, cs });
+  console.log(Object.keys(inViewLookup).length);
   console.log(
     Object.values(inViewLookup).filter((viewable) => viewable).length
   );
