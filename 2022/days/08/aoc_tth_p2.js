@@ -50,9 +50,9 @@ rl.on("line", function (line) {
     loadRows(line);
 });
 rl.once("close", function () {
-    console.log(treeRows);
+    // console.log(treeRows);
     var treeCols = zip(treeRows);
-    console.log(treeCols);
+    // console.log(treeCols);
     var rs = treeRows.length;
     var cs = treeCols.length;
     var inViewMap = [];
@@ -69,24 +69,24 @@ rl.once("close", function () {
                 var treeHeight = treeRows[c][r];
                 var leftVals = treeRows[c].slice(0, r);
                 var leftInView = treesInView(treeHeight, leftVals, DIRECTION.left);
-                console.log({ key: key, treeHeight: treeHeight, leftVals: leftVals, leftInView: leftInView });
+                // console.log({ key, treeHeight, leftVals, leftInView });
                 var rightVals = treeRows[c].slice(r + 1);
                 var rightInView = treesInView(treeHeight, rightVals, DIRECTION.right);
-                console.log({ key: key, treeHeight: treeHeight, rightVals: rightVals, rightInView: rightInView });
+                // console.log({ key, treeHeight, rightVals, rightInView });
                 var upVals = treeCols[r].slice(0, c);
                 var upInView = treesInView(treeHeight, upVals, DIRECTION.up);
-                console.log({ key: key, treeHeight: treeHeight, upVals: upVals, upInView: upInView });
+                // console.log({ key, treeHeight, upVals, upInView });
                 var downVals = treeCols[r].slice(c + 1);
                 var downInView = treesInView(treeHeight, downVals, DIRECTION.down);
-                console.log({ key: key, treeHeight: treeHeight, downVals: downVals, downInView: downInView });
+                // console.log({ key, treeHeight, downVals, downInView });
                 inViewMap[c].push(leftInView * rightInView * upInView * downInView);
                 inViewLookup[key] = leftInView * rightInView * upInView * downInView;
             }
         }
     }
-    console.log(inViewMap);
-    console.log({ rs: rs, cs: cs });
-    console.log(Object.keys(inViewLookup).length);
+    // console.log(inViewMap);
+    // console.log({ rs, cs });
+    // console.log(Object.keys(inViewLookup).length);
     console.log(Math.max.apply(Math, Object.values(inViewLookup)));
     /* That's not the right answer; your answer is too low.
     If you're stuck, make sure you're using the full input data; there are also some general tips on the about page,

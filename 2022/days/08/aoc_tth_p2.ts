@@ -58,9 +58,9 @@ rl.on("line", (line: string) => {
 });
 
 rl.once("close", () => {
-  console.log(treeRows);
+  // console.log(treeRows);
   const treeCols = zip(treeRows);
-  console.log(treeCols);
+  // console.log(treeCols);
 
   const rs = treeRows.length;
   const cs = treeCols.length;
@@ -78,28 +78,28 @@ rl.once("close", () => {
 
         const leftVals = treeRows[c].slice(0, r);
         const leftInView = treesInView(treeHeight, leftVals, DIRECTION.left);
-        console.log({ key, treeHeight, leftVals, leftInView });
+        // console.log({ key, treeHeight, leftVals, leftInView });
 
         const rightVals = treeRows[c].slice(r + 1);
         const rightInView = treesInView(treeHeight, rightVals, DIRECTION.right);
-        console.log({ key, treeHeight, rightVals, rightInView });
+        // console.log({ key, treeHeight, rightVals, rightInView });
 
         const upVals = treeCols[r].slice(0, c);
         const upInView = treesInView(treeHeight, upVals, DIRECTION.up);
-        console.log({ key, treeHeight, upVals, upInView });
+        // console.log({ key, treeHeight, upVals, upInView });
 
         const downVals = treeCols[r].slice(c + 1);
         const downInView = treesInView(treeHeight, downVals, DIRECTION.down);
-        console.log({ key, treeHeight, downVals, downInView });
+        // console.log({ key, treeHeight, downVals, downInView });
 
         inViewMap[c].push(leftInView * rightInView * upInView * downInView);
         inViewLookup[key] = leftInView * rightInView * upInView * downInView;
       }
     }
   }
-  console.log(inViewMap);
-  console.log({ rs, cs });
-  console.log(Object.keys(inViewLookup).length);
+  // console.log(inViewMap);
+  // console.log({ rs, cs });
+  // console.log(Object.keys(inViewLookup).length);
   console.log(Math.max(...Object.values(inViewLookup)));
   /* That's not the right answer; your answer is too low.
   If you're stuck, make sure you're using the full input data; there are also some general tips on the about page,
