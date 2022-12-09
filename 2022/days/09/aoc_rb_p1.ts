@@ -44,6 +44,8 @@ const nearBy = (
   head: [hx: number, hy: number],
   tail: [tx: number, ty: number]
 ) => {
+  const [hx, hy] = head;
+  const [tx, ty] = tail;
   return Math.hypot(hy - ty, hx - tx) < 2;
 };
 const makeMoves = (instructions: [move: string, count: number][]) => {

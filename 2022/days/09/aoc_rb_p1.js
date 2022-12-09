@@ -38,6 +38,8 @@ var tx = start[0], ty = start[1];
 var headVisited = new Set([startKey]);
 var tailVisited = new Set([startKey]);
 var nearBy = function (head, tail) {
+    var hx = head[0], hy = head[1];
+    var tx = tail[0], ty = tail[1];
     return Math.hypot(hy - ty, hx - tx) < 2;
 };
 var makeMoves = function (instructions) {
