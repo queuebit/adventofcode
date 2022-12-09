@@ -40,7 +40,7 @@ var startKey = "0-0";
 var hx = start[0], hy = start[1];
 var nKnots = 9;
 var knots = [];
-for (var k = 1; k < nKnots; k++) {
+for (var k = 0; k < nKnots; k++) {
     knots.push(start);
 }
 var tx = start[0], ty = start[1];
@@ -61,7 +61,6 @@ var makeMoves = function (instructions) {
             headVisited.add("".concat(hx, "-").concat(hy));
             var lead = [hx, hy];
             var newKnots = [];
-            console.log({ lead: lead });
             knots.forEach(function (knot, i) {
                 var kx = knot[0], ky = knot[1];
                 if (!nearBy(lead, knot)) {
@@ -69,7 +68,6 @@ var makeMoves = function (instructions) {
                     var sepx = lx - kx;
                     var sepy = ly - ky;
                     var sep = "".concat(sepx).concat(sepy);
-                    console.log({ lead: lead, sep: sep, knot: knot });
                     var _a = FOLLOW_MOVE[sep], kmx = _a[0], kmy = _a[1];
                     kx += kmx;
                     ky += kmy;
@@ -80,7 +78,6 @@ var makeMoves = function (instructions) {
                 var newKnot = [kx, ky];
                 newKnots.push(newKnot);
                 lead = newKnot;
-                console.log(newKnot);
             });
             knots = newKnots;
         };
@@ -91,6 +88,6 @@ var makeMoves = function (instructions) {
 };
 rl.once("close", function () {
     makeMoves(instructions);
-    console.log(tailVisited);
+    // console.log(tailVisited);
     console.log(tailVisited.size);
 });

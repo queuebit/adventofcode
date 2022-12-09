@@ -43,7 +43,7 @@ let startKey = `0-0`;
 let [hx, hy] = start;
 const nKnots = 9;
 let knots: Coord[] = [];
-for (let k = 1; k < nKnots; k++) {
+for (let k = 0; k < nKnots; k++) {
   knots.push(start);
 }
 
@@ -69,7 +69,6 @@ const makeMoves = (instructions: [move: string, count: number][]) => {
 
       let lead: Coord = [hx, hy];
       let newKnots: Coord[] = [];
-      console.log({ lead });
       knots.forEach((knot, i) => {
         let [kx, ky] = knot;
         if (!nearBy(lead, knot)) {
@@ -77,7 +76,6 @@ const makeMoves = (instructions: [move: string, count: number][]) => {
           const sepx = lx - kx;
           const sepy = ly - ky;
           const sep = `${sepx}${sepy}`;
-          console.log({ lead, sep, knot });
           const [kmx, kmy] = FOLLOW_MOVE[sep];
           kx += kmx;
           ky += kmy;
@@ -88,7 +86,6 @@ const makeMoves = (instructions: [move: string, count: number][]) => {
         const newKnot: Coord = [kx, ky];
         newKnots.push(newKnot);
         lead = newKnot;
-        console.log(newKnot);
       });
       knots = newKnots;
     }
@@ -96,6 +93,6 @@ const makeMoves = (instructions: [move: string, count: number][]) => {
 };
 rl.once("close", () => {
   makeMoves(instructions);
-  console.log(tailVisited);
+  // console.log(tailVisited);
   console.log(tailVisited.size);
 });
