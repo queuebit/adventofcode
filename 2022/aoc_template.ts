@@ -10,3 +10,9 @@ const rl = readline.createInterface({
 rl.on("line", (line: string) => {});
 
 rl.once("close", () => {});
+
+const part1 = () => {};
+const part2 = () => {};
+
+part1();
+part2();

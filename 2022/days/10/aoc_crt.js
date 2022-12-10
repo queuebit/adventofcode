@@ -8,3 +8,7 @@ var rl = readline.createInterface({
 });
 rl.on("line", function (line) { });
 rl.once("close", function () { });
+var part1 = function () { };
+var part2 = function () { };
+part1();
+part2();
