@@ -19,6 +19,30 @@ var Monkey = /** @class */ (function () {
     Monkey.prototype.catchItem = function (item) {
         this.has.push(item);
     };
+    Monkey.prototype.inspect = function () {
+        var _this = this;
+        /*
+        Monkey inspects an item with a worry level of 79.
+        Worry level is multiplied by 19 to 1501.
+        Monkey gets bored with item. Worry level is divided by 3 to 500.
+        Current worry level is not divisible by 23.
+        Item with worry level 500 is thrown to monkey 3.
+        */
+        this.has.forEach(function (item) {
+            _this.inspections += 1;
+            console.log({ item: item });
+            var worry = _this.operation(item);
+            console.log({ worry: worry });
+            worry = Math.round(worry / 3);
+            console.log({ worry: worry });
+            if (worry % _this.testBy === 0) {
+                console.log("throw to TRUE ".concat(_this.trueTo));
+            }
+            else {
+                console.log("throw to FALSE ".concat(_this.falseTo));
+            }
+        });
+    };
     return Monkey;
 }());
 var captureNotes = function (notes) {
@@ -36,7 +60,7 @@ var captureNotes = function (notes) {
         var fOperation = function (x) { return x; };
         var opString = notes[offset + 2].substring(19).trim();
         var rOld = /old/g;
-        var rFunc = /^old (?<op>\+\/*\-) (?<operand>\w+)$/;
+        var rFunc = /old (?<op>[\+\-\/\*]{1}) (?<operand>\w+)/;
         var funcMatch = opString.match(rFunc);
         var op = "noop";
         var operand = 0;
@@ -47,6 +71,7 @@ var captureNotes = function (notes) {
                     ? 1
                     : Number(funcMatch.groups.operand);
         }
+        console.log({ op: op, operand: operand });
         if ((opString.match(rOld) || []).length > 1) {
             switch (op) {
                 case "+":
@@ -99,7 +124,13 @@ var captureNotes = function (notes) {
     });
     return monkeys;
 };
-var part1 = function () { };
+var part1 = function (monkeys) {
+    monkeys[0].inspect();
+    // const rounds = 1;
+    // for (let r = 0; r < rounds; r++) {
+    //   monkeys.forEach((m) => {});
+    // }
+};
 var part2 = function () { };
 var lines = [];
 rl.on("line", function (line) {
@@ -108,6 +139,6 @@ rl.on("line", function (line) {
 rl.once("close", function () {
     var monkeys = captureNotes(lines);
     console.log(monkeys);
-    part1();
+    part1(monkeys);
     part2();
 });

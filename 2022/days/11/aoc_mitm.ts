@@ -36,6 +36,29 @@ class Monkey {
   catchItem(item: number) {
     this.has.push(item);
   }
+
+  inspect() {
+    /*
+    Monkey inspects an item with a worry level of 79.
+    Worry level is multiplied by 19 to 1501.
+    Monkey gets bored with item. Worry level is divided by 3 to 500.
+    Current worry level is not divisible by 23.
+    Item with worry level 500 is thrown to monkey 3.
+    */
+    this.has.forEach((item) => {
+      this.inspections += 1;
+      console.log({ item });
+      let worry = this.operation(item);
+      console.log({ worry });
+      worry = Math.round(worry / 3);
+      console.log({ worry });
+      if (worry % this.testBy === 0) {
+        console.log(`throw to TRUE ${this.trueTo}`);
+      } else {
+        console.log(`throw to FALSE ${this.falseTo}`);
+      }
+    });
+  }
 }
 const captureNotes = (notes: string[]) => {
   const monkeys: Monkey[] = new Array(Math.ceil(notes.length / 7))
@@ -56,7 +79,7 @@ const captureNotes = (notes: string[]) => {
       let fOperation: (x: number) => number = (x: number) => x;
       const opString = notes[offset + 2].substring(19).trim();
       const rOld = /old/g;
-      const rFunc = /^old (?<op>\+\/*\-) (?<operand>\w+)$/;
+      const rFunc = /old (?<op>[\+\-\/\*]{1}) (?<operand>\w+)/;
       const funcMatch = opString.match(rFunc);
       let op = "noop";
       let operand = 0;
@@ -67,6 +90,7 @@ const captureNotes = (notes: string[]) => {
             ? 1
             : Number(funcMatch.groups.operand);
       }
+      console.log({ op, operand });
       if ((opString.match(rOld) || []).length > 1) {
         switch (op) {
           case "+":
@@ -132,7 +156,13 @@ const captureNotes = (notes: string[]) => {
     });
   return monkeys;
 };
-const part1 = () => {};
+const part1 = (monkeys: Monkey[]) => {
+  monkeys[0].inspect();
+  // const rounds = 1;
+  // for (let r = 0; r < rounds; r++) {
+  //   monkeys.forEach((m) => {});
+  // }
+};
 const part2 = () => {};
 
 let lines: string[] = [];
@@ -143,6 +173,6 @@ rl.on("line", (line: string) => {
 rl.once("close", () => {
   const monkeys: Monkey[] = captureNotes(lines);
   console.log(monkeys);
-  part1();
+  part1(monkeys);
   part2();
 });
