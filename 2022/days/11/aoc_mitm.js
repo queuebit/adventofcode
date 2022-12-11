@@ -28,20 +28,26 @@ var Monkey = /** @class */ (function () {
         Current worry level is not divisible by 23.
         Item with worry level 500 is thrown to monkey 3.
         */
-        this.has.forEach(function (item) {
+        var throws = this.has.map(function (item) {
             _this.inspections += 1;
-            console.log({ item: item });
+            console.log(" . Monkey inspects an item with a worry level of ".concat(item));
             var worry = _this.operation(item);
-            console.log({ worry: worry });
-            worry = Math.round(worry / 3);
-            console.log({ worry: worry });
+            console.log(" .   Worry level is now: ".concat(worry));
+            worry = Math.floor(worry / 3);
+            console.log(" .   Bored / 3 is now: ".concat(worry));
             if (worry % _this.testBy === 0) {
-                console.log("throw to TRUE ".concat(_this.trueTo));
+                console.log(" .   Current worry level is divisible by ".concat(_this.testBy));
+                console.log("Item with worry level ".concat(worry, " is thrown to ").concat(_this.trueTo));
+                return [worry, _this.trueTo];
             }
             else {
-                console.log("throw to FALSE ".concat(_this.falseTo));
+                console.log(" .   Current worry level is NOT divisible by ".concat(_this.testBy));
+                console.log(" .   Item with worry level ".concat(worry, " is thrown to ").concat(_this.falseTo));
+                return [worry, _this.falseTo];
             }
         });
+        this.has = [];
+        return throws;
     };
     return Monkey;
 }());
@@ -71,7 +77,6 @@ var captureNotes = function (notes) {
                     ? 1
                     : Number(funcMatch.groups.operand);
         }
-        console.log({ op: op, operand: operand });
         if ((opString.match(rOld) || []).length > 1) {
             switch (op) {
                 case "+":
@@ -82,13 +87,13 @@ var captureNotes = function (notes) {
                     fOperation = function (x) { return 1; };
                     break;
                 case "*":
-                    fOperation = function (x) { return Math.pow(x, 2); };
+                    console.log("SELFIE");
+                    fOperation = function (x) { return x * x; };
                     break;
                 default:
                     fOperation = function (x) { return x; };
                     break;
             }
-            fOperation = function (x) { return x; };
         }
         else {
             switch (op) {
@@ -125,11 +130,22 @@ var captureNotes = function (notes) {
     return monkeys;
 };
 var part1 = function (monkeys) {
-    monkeys[0].inspect();
-    // const rounds = 1;
-    // for (let r = 0; r < rounds; r++) {
-    //   monkeys.forEach((m) => {});
-    // }
+    var rounds = 20;
+    for (var r = 1; r <= rounds; r++) {
+        monkeys.forEach(function (m) {
+            console.log("MONKEY ".concat(m.name));
+            var throws = m.inspect();
+            throws.forEach(function (_a) {
+                var w = _a[0], t = _a[1];
+                monkeys[t].catchItem(w);
+            });
+        });
+        console.log("ROUND ".concat(r, " ---------------"));
+        monkeys.forEach(function (m, i) { return console.log("Monkey ".concat(i, ": ").concat(m.has)); });
+    }
+    var inspections = monkeys.map(function (m) { return m.inspections; });
+    var _a = inspections.sort(function (a, b) { return b - a; }), i1 = _a[0], i2 = _a[1];
+    console.log({ i1: i1, i2: i2, val: i1 * i2 });
 };
 var part2 = function () { };
 var lines = [];
@@ -138,7 +154,6 @@ rl.on("line", function (line) {
 });
 rl.once("close", function () {
     var monkeys = captureNotes(lines);
-    console.log(monkeys);
     part1(monkeys);
     part2();
 });

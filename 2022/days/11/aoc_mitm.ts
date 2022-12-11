@@ -45,19 +45,31 @@ class Monkey {
     Current worry level is not divisible by 23.
     Item with worry level 500 is thrown to monkey 3.
     */
-    this.has.forEach((item) => {
+    let throws: [w: number, t: number][] = this.has.map((item) => {
       this.inspections += 1;
-      console.log({ item });
+      console.log(` . Monkey inspects an item with a worry level of ${item}`);
       let worry = this.operation(item);
-      console.log({ worry });
-      worry = Math.round(worry / 3);
-      console.log({ worry });
+      console.log(` .   Worry level is now: ${worry}`);
+      worry = Math.floor(worry / 3);
+      console.log(` .   Bored / 3 is now: ${worry}`);
       if (worry % this.testBy === 0) {
-        console.log(`throw to TRUE ${this.trueTo}`);
+        console.log(` .   Current worry level is divisible by ${this.testBy}`);
+        console.log(
+          `Item with worry level ${worry} is thrown to ${this.trueTo}`
+        );
+        return [worry, this.trueTo];
       } else {
-        console.log(`throw to FALSE ${this.falseTo}`);
+        console.log(
+          ` .   Current worry level is NOT divisible by ${this.testBy}`
+        );
+        console.log(
+          ` .   Item with worry level ${worry} is thrown to ${this.falseTo}`
+        );
+        return [worry, this.falseTo];
       }
     });
+    this.has = [];
+    return throws;
   }
 }
 const captureNotes = (notes: string[]) => {
@@ -90,7 +102,6 @@ const captureNotes = (notes: string[]) => {
             ? 1
             : Number(funcMatch.groups.operand);
       }
-      console.log({ op, operand });
       if ((opString.match(rOld) || []).length > 1) {
         switch (op) {
           case "+":
@@ -101,13 +112,13 @@ const captureNotes = (notes: string[]) => {
             fOperation = (x: number) => 1;
             break;
           case "*":
-            fOperation = (x: number) => x ** 2;
+            console.log("SELFIE");
+            fOperation = (x: number) => x * x;
             break;
           default:
             fOperation = (x: number) => x;
             break;
         }
-        fOperation = (x: number) => x;
       } else {
         switch (op) {
           case "+":
@@ -157,11 +168,21 @@ const captureNotes = (notes: string[]) => {
   return monkeys;
 };
 const part1 = (monkeys: Monkey[]) => {
-  monkeys[0].inspect();
-  // const rounds = 1;
-  // for (let r = 0; r < rounds; r++) {
-  //   monkeys.forEach((m) => {});
-  // }
+  const rounds = 20;
+  for (let r = 1; r <= rounds; r++) {
+    monkeys.forEach((m) => {
+      console.log(`MONKEY ${m.name}`);
+      const throws = m.inspect();
+      throws.forEach(([w, t]) => {
+        monkeys[t].catchItem(w);
+      });
+    });
+    console.log(`ROUND ${r} ---------------`);
+    monkeys.forEach((m, i) => console.log(`Monkey ${i}: ${m.has}`));
+  }
+  const inspections = monkeys.map((m) => m.inspections);
+  const [i1, i2] = inspections.sort((a, b) => b - a);
+  console.log({ i1, i2, val: i1 * i2 });
 };
 const part2 = () => {};
 
@@ -172,7 +193,6 @@ rl.on("line", (line: string) => {
 
 rl.once("close", () => {
   const monkeys: Monkey[] = captureNotes(lines);
-  console.log(monkeys);
   part1(monkeys);
   part2();
 });
