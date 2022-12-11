@@ -37,7 +37,7 @@ class Monkey {
     this.has.push(item);
   }
 
-  inspect() {
+  inspect(relief: boolean = true, commonFactor: number = 1) {
     /*
     Monkey inspects an item with a worry level of 79.
     Worry level is multiplied by 19 to 1501.
@@ -47,24 +47,28 @@ class Monkey {
     */
     let throws: [w: number, t: number][] = this.has.map((item) => {
       this.inspections += 1;
-      console.log(` . Monkey inspects an item with a worry level of ${item}`);
+      // console.log(` . Monkey inspects an item with a worry level of ${item}`);
       let worry = this.operation(item);
-      console.log(` .   Worry level is now: ${worry}`);
-      worry = Math.floor(worry / 3);
-      console.log(` .   Bored / 3 is now: ${worry}`);
+      // console.log(` .   Worry level is now: ${worry}`);
+      if (relief) {
+        worry = Math.floor(worry / 3);
+        // console.log(` .   Bored / 3 is now: ${worry}`);
+      } else {
+        worry = worry % commonFactor;
+      }
       if (worry % this.testBy === 0) {
-        console.log(` .   Current worry level is divisible by ${this.testBy}`);
-        console.log(
-          `Item with worry level ${worry} is thrown to ${this.trueTo}`
-        );
+        // console.log(` .   Current worry level is divisible by ${this.testBy}`);
+        // console.log(
+        //   `Item with worry level ${worry} is thrown to ${this.trueTo}`
+        // );
         return [worry, this.trueTo];
       } else {
-        console.log(
-          ` .   Current worry level is NOT divisible by ${this.testBy}`
-        );
-        console.log(
-          ` .   Item with worry level ${worry} is thrown to ${this.falseTo}`
-        );
+        // console.log(
+        //   ` .   Current worry level is NOT divisible by ${this.testBy}`
+        // );
+        // console.log(
+        //   ` .   Item with worry level ${worry} is thrown to ${this.falseTo}`
+        // );
         return [worry, this.falseTo];
       }
     });
@@ -112,7 +116,6 @@ const captureNotes = (notes: string[]) => {
             fOperation = (x: number) => 1;
             break;
           case "*":
-            console.log("SELFIE");
             fOperation = (x: number) => x * x;
             break;
           default:
@@ -171,20 +174,45 @@ const part1 = (monkeys: Monkey[]) => {
   const rounds = 20;
   for (let r = 1; r <= rounds; r++) {
     monkeys.forEach((m) => {
-      console.log(`MONKEY ${m.name}`);
+      // console.log(`MONKEY ${m.name}`);
       const throws = m.inspect();
       throws.forEach(([w, t]) => {
         monkeys[t].catchItem(w);
       });
     });
-    console.log(`ROUND ${r} ---------------`);
-    monkeys.forEach((m, i) => console.log(`Monkey ${i}: ${m.has}`));
+    // console.log(`ROUND ${r} ---------------`);
+    // monkeys.forEach((m, i) => console.log(`Monkey ${i}: ${m.has}`));
   }
   const inspections = monkeys.map((m) => m.inspections);
+  console.log(inspections);
   const [i1, i2] = inspections.sort((a, b) => b - a);
   console.log({ i1, i2, val: i1 * i2 });
 };
-const part2 = () => {};
+const part2 = (monkeys: Monkey[], commonFactor: number) => {
+  const rounds = 10000;
+  for (let r = 1; r <= rounds; r++) {
+    monkeys.forEach((m) => {
+      // console.log(`MONKEY ${m.name}`);
+      const throws = m.inspect(false, commonFactor);
+      throws.forEach(([w, t]) => {
+        monkeys[t].catchItem(w);
+      });
+    });
+    const infoRounds = [
+      1, 20, 1e3, 2e3, 3e3, 4e3, 5e3, 6e3, 7e3, 8e3, 9e3, 10e3,
+    ];
+    if (infoRounds.includes(r)) {
+      console.log(`ROUND ${r} ---------------`);
+      //monkeys.forEach((m, i) => console.log(`Monkey ${i}: ${m.has}`));
+      const inspections = monkeys.map((m) => m.inspections);
+      console.log(inspections);
+    }
+  }
+  const inspections = monkeys.map((m) => m.inspections);
+  console.log(inspections);
+  const [i1, i2] = inspections.sort((a, b) => b - a);
+  console.log({ i1, i2, val: i1 * i2 });
+};
 
 let lines: string[] = [];
 rl.on("line", (line: string) => {
@@ -193,6 +221,8 @@ rl.on("line", (line: string) => {
 
 rl.once("close", () => {
   const monkeys: Monkey[] = captureNotes(lines);
+  const monkeys2: Monkey[] = captureNotes(lines);
+  const commonFactor = monkeys2.map((m) => m.testBy).reduce((a, b) => a * b, 1);
   part1(monkeys);
-  part2();
+  part2(monkeys2, commonFactor);
 });
