@@ -10,11 +10,8 @@ var program = [];
 rl.on("line", function (line) {
     program.push(line);
 });
-rl.once("close", function () {
-    part1();
-    part2();
-});
-function part1() {
+var sum = function (a, b) { return a + b; };
+var runProgram = function (program) {
     console.log(program.length);
     var executable = program.map(function (line) {
         var command = line.split(" ");
@@ -43,8 +40,15 @@ function part1() {
             regX.push(Number(r.args[0]));
         }
     });
+    return regX;
+};
+rl.once("close", function () {
+    var registers = runProgram(program);
+    part1(registers);
+    part2(registers);
+});
+function part1(regX) {
     console.log(regX);
-    var sum = function (a, b) { return a + b; };
     console.log(regX.slice(0, 6).reduce(function (a, b) { return a + b; }));
     var samples = [20, 60, 100, 140, 180, 220];
     var signalStrengths = [];
@@ -56,4 +60,22 @@ function part1() {
     console.log(signalStrengths);
     console.log(signalStrengths.reduce(sum));
 }
-function part2() { }
+function part2(regX) {
+    console.log(regX);
+    var screen = [];
+    regX.forEach(function (_, cycle) {
+        var r = regX.slice(0, cycle + 1).reduce(sum);
+        if (Math.abs(r - (cycle % 40)) <= 1) {
+            screen.push("#");
+        }
+        else {
+            screen.push(".");
+        }
+    });
+    console.log(screen.slice(0, 40).join(""));
+    console.log(screen.slice(40, 80).join(""));
+    console.log(screen.slice(80, 120).join(""));
+    console.log(screen.slice(120, 160).join(""));
+    console.log(screen.slice(160, 200).join(""));
+    console.log(screen.slice(200, 240).join(""));
+}

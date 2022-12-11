@@ -14,12 +14,8 @@ rl.on("line", (line: string) => {
   program.push(line);
 });
 
-rl.once("close", () => {
-  part1();
-  part2();
-});
-
-function part1() {
+const sum = (a: number, b: number) => a + b;
+const runProgram = (program: string[]) => {
   console.log(program.length);
   let executable = program.map((line: string) => {
     const command = line.split(" ");
@@ -46,8 +42,16 @@ function part1() {
       regX.push(Number(r.args[0]));
     }
   });
+  return regX;
+};
+rl.once("close", () => {
+  const registers = runProgram(program);
+  part1(registers);
+  part2(registers);
+});
+
+function part1(regX: number[]) {
   console.log(regX);
-  const sum = (a: number, b: number) => a + b;
   console.log(regX.slice(0, 6).reduce((a, b) => a + b));
   const samples = [20, 60, 100, 140, 180, 220];
   let signalStrengths: number[] = [];
@@ -59,4 +63,22 @@ function part1() {
   console.log(signalStrengths);
   console.log(signalStrengths.reduce(sum));
 }
-function part2() {}
+function part2(regX: number[]) {
+  console.log(regX);
+  let screen: string[] = [];
+  regX.forEach((_, cycle) => {
+    const r = regX.slice(0, cycle + 1).reduce(sum);
+    if (Math.abs(r - (cycle % 40)) <= 1) {
+      screen.push("#");
+    } else {
+      screen.push(".");
+    }
+  });
+
+  console.log(screen.slice(0, 40).join(""));
+  console.log(screen.slice(40, 80).join(""));
+  console.log(screen.slice(80, 120).join(""));
+  console.log(screen.slice(120, 160).join(""));
+  console.log(screen.slice(160, 200).join(""));
+  console.log(screen.slice(200, 240).join(""));
+}
