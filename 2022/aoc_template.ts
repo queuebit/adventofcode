@@ -7,12 +7,12 @@ const rl = readline.createInterface({
   terminal: false,
 });
 
-rl.on("line", (line: string) => {});
-
-rl.once("close", () => {});
-
 const part1 = () => {};
 const part2 = () => {};
 
-part1();
-part2();
+rl.on("line", (line: string) => {});
+
+rl.once("close", () => {
+  part1();
+  part2();
+});
