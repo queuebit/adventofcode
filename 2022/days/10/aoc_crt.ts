@@ -7,12 +7,46 @@ const rl = readline.createInterface({
   terminal: false,
 });
 
-rl.on("line", (line: string) => {});
+type Command = { op: string; args: (number | string)[] };
 
-rl.once("close", () => {});
+let program: string[] = [];
+rl.on("line", (line: string) => {
+  program.push(line);
+});
 
-function part1() {}
+rl.once("close", () => {
+  part1();
+  part2();
+});
+
+function part1() {
+  console.log(program.length);
+  let executable = program.map((line: string) => {
+    const command = line.split(" ");
+    let res: Command;
+    if (command[0] === "addx") {
+      res = {
+        op: command[0],
+        args: command.slice(1),
+      };
+    } else {
+      res = {
+        op: command[0],
+        args: [],
+      };
+    }
+    return res;
+  });
+  let regX: number[] = [1];
+  executable.forEach((r) => {
+    if (r.op === "noop") {
+      regX.push(0);
+    } else if (r.op === "addx") {
+      regX.push(0);
+      regX.push(Number(r.args[0]));
+    }
+  });
+  console.log(regX);
+  console.log(regX.slice(0, 6).reduce((a, b) => a + b));
+}
 function part2() {}
-
-part1();
-part2();
