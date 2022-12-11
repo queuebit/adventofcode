@@ -44,6 +44,16 @@ function part1() {
         }
     });
     console.log(regX);
+    var sum = function (a, b) { return a + b; };
     console.log(regX.slice(0, 6).reduce(function (a, b) { return a + b; }));
+    var samples = [20, 60, 100, 140, 180, 220];
+    var signalStrengths = [];
+    samples.forEach(function (s) {
+        var register = regX.slice(0, s).reduce(sum);
+        var signalStrength = s * register;
+        signalStrengths.push(signalStrength);
+    });
+    console.log(signalStrengths);
+    console.log(signalStrengths.reduce(sum));
 }
 function part2() { }

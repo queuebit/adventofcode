@@ -47,6 +47,16 @@ function part1() {
     }
   });
   console.log(regX);
+  const sum = (a: number, b: number) => a + b;
   console.log(regX.slice(0, 6).reduce((a, b) => a + b));
+  const samples = [20, 60, 100, 140, 180, 220];
+  let signalStrengths: number[] = [];
+  samples.forEach((s) => {
+    const register = regX.slice(0, s).reduce(sum);
+    const signalStrength = s * register;
+    signalStrengths.push(signalStrength);
+  });
+  console.log(signalStrengths);
+  console.log(signalStrengths.reduce(sum));
 }
 function part2() {}
