@@ -11,20 +11,30 @@ class Monkey {
   name: number;
   has: number[];
   operation: (x: number) => number;
-  test: (x: number) => void;
   inspections: number;
+  testBy: number;
+  trueTo: number;
+  falseTo: number;
 
   constructor(
     name: number,
     starting: number[],
     operation: (x: number) => number,
-    test: (x: number) => void
+    testBy: number,
+    trueTo: number,
+    falseTo: number
   ) {
     this.name = name;
     this.has = starting;
     this.operation = operation;
-    this.test = test;
+    this.testBy = testBy;
+    this.trueTo = trueTo;
+    this.falseTo = falseTo;
     this.inspections = 0;
+  }
+
+  catchItem(item: number) {
+    this.has.push(item);
   }
 }
 const captureNotes = (notes: string[]) => {
@@ -94,11 +104,30 @@ const captureNotes = (notes: string[]) => {
         }
       }
 
+      const rTest = /divisible by (?<divisor>\d+)$/;
+      const testString = notes[offset + 3].trim();
+      const testMatch = testString.match(rTest);
+      const testBy: number =
+        testMatch && testMatch.groups ? Number(testMatch.groups.divisor) : 1;
+
+      const trueMoveString = notes[offset + 4].trim();
+      const rThrowTo = /throw to monkey (?<mk>\d+)/;
+      const trueMatch = trueMoveString.match(rThrowTo);
+      const trueTo: number =
+        trueMatch && trueMatch.groups ? Number(trueMatch.groups.mk) : 0;
+
+      const falseMoveString = notes[offset + 5].trim();
+      const falseMatch = falseMoveString.match(rThrowTo);
+      const falseTo: number =
+        falseMatch && falseMatch.groups ? Number(falseMatch.groups.mk) : 0;
+
       return new Monkey(
         monkeyName,
         startingItems,
         fOperation,
-        (x: number) => {}
+        testBy,
+        trueTo,
+        falseTo
       );
     });
   return monkeys;

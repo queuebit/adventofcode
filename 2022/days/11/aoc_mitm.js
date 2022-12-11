@@ -7,13 +7,18 @@ var rl = readline.createInterface({
     terminal: false
 });
 var Monkey = /** @class */ (function () {
-    function Monkey(name, starting, operation, test) {
+    function Monkey(name, starting, operation, testBy, trueTo, falseTo) {
         this.name = name;
         this.has = starting;
         this.operation = operation;
-        this.test = test;
+        this.testBy = testBy;
+        this.trueTo = trueTo;
+        this.falseTo = falseTo;
         this.inspections = 0;
     }
+    Monkey.prototype.catchItem = function (item) {
+        this.has.push(item);
+    };
     return Monkey;
 }());
 var captureNotes = function (notes) {
@@ -78,9 +83,19 @@ var captureNotes = function (notes) {
                     fOperation = function (x) { return x; };
                     break;
             }
-            console.log("Single OLD: ".concat(opString));
         }
-        return new Monkey(monkeyName, startingItems, fOperation, function (x) { });
+        var rTest = /divisible by (?<divisor>\d+)$/;
+        var testString = notes[offset + 3].trim();
+        var testMatch = testString.match(rTest);
+        var testBy = testMatch && testMatch.groups ? Number(testMatch.groups.divisor) : 1;
+        var trueMoveString = notes[offset + 4].trim();
+        var rThrowTo = /throw to monkey (?<mk>\d+)/;
+        var trueMatch = trueMoveString.match(rThrowTo);
+        var trueTo = trueMatch && trueMatch.groups ? Number(trueMatch.groups.mk) : 0;
+        var falseMoveString = notes[offset + 5].trim();
+        var falseMatch = falseMoveString.match(rThrowTo);
+        var falseTo = falseMatch && falseMatch.groups ? Number(falseMatch.groups.mk) : 0;
+        return new Monkey(monkeyName, startingItems, fOperation, testBy, trueTo, falseTo);
     });
     return monkeys;
 };
