@@ -57,9 +57,7 @@ class HeightMap {
         (a: [k: string, d: number], b: [k: string, d: number]) => a[1] - b[1]
       );
       const [uk, _] = sq[0];
-      if (uk === this.end) {
-        return [dist, prev];
-      }
+      console.log(q.length);
       q = sq.splice(1);
 
       const [ukx, uky] = uk.split("-").map(Number);
@@ -80,20 +78,36 @@ class HeightMap {
         neighbors.push(`${ukx}-${uky - 1}`);
         neighbors.push(`${ukx}-${uky + 1}`);
       }
+      console.log({ neighbors });
 
       neighbors.forEach((n) => {
         const qks = q.map((qi) => qi[0]);
         let alt: number;
         const [nx, ny] = n.split("-").map(Number);
-        const diff0 =
-          this.map[ukx][uky].charCodeAt(0) - this.map[nx][ny].charCodeAt(0) ===
-          0;
-        const diff1 =
-          this.map[ukx][uky].charCodeAt(0) - this.map[nx][ny].charCodeAt(0) ===
-          -1;
-        const diffSa = uk === this.start && this.map[nx][ny] === "a";
-        const diffzE = uk === "z" && n === this.end;
+        const uChar = this.map[ukx][uky];
+        const uHeight = uChar.charCodeAt(0);
+        const nChar = this.map[nx][ny];
+        const nHeight = nChar.charCodeAt(0);
+        const diff0 = uHeight - nHeight === 0;
+        const diff1 = Math.abs(uHeight - nHeight) === 1;
+        const diffSa = uk === this.start && nChar === "a";
+        const diffzE = uChar === "z" && n === this.end;
         let nearNeighbor = diff0 || diff1 || diffSa || diffzE;
+        if (n === "3-7") {
+          console.log({
+            q,
+            qks,
+            n,
+            uChar,
+            nChar,
+            diff0,
+            diff1,
+            diffSa,
+            diffzE,
+            nearNeighbor,
+            inList: qks.includes(n),
+          });
+        }
         // uk to n is same character
         // uk to n is single character
         // uk is S and n is a
@@ -114,6 +128,7 @@ class HeightMap {
 
 const part1 = () => {
   hm.showMap();
+  // hm.dijkstra();
   console.log(hm.dijkstra());
 };
 const part2 = () => {};

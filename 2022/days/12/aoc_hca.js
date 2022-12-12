@@ -48,9 +48,7 @@ var HeightMap = /** @class */ (function () {
         var _loop_1 = function () {
             var sq = q.sort(function (a, b) { return a[1] - b[1]; });
             var _a = sq[0], uk = _a[0], _ = _a[1];
-            if (uk === this_1.end) {
-                return { value: [dist, prev] };
-            }
+            console.log(q.length);
             q = sq.splice(1);
             var _b = uk.split("-").map(Number), ukx = _b[0], uky = _b[1];
             var neighbors = [];
@@ -74,17 +72,35 @@ var HeightMap = /** @class */ (function () {
                 neighbors.push("".concat(ukx, "-").concat(uky - 1));
                 neighbors.push("".concat(ukx, "-").concat(uky + 1));
             }
+            console.log({ neighbors: neighbors });
             neighbors.forEach(function (n) {
                 var qks = q.map(function (qi) { return qi[0]; });
                 var alt;
                 var _a = n.split("-").map(Number), nx = _a[0], ny = _a[1];
-                var diff0 = _this.map[ukx][uky].charCodeAt(0) - _this.map[nx][ny].charCodeAt(0) ===
-                    0;
-                var diff1 = _this.map[ukx][uky].charCodeAt(0) - _this.map[nx][ny].charCodeAt(0) ===
-                    -1;
-                var diffSa = uk === _this.start && _this.map[nx][ny] === "a";
-                var diffzE = uk === "z" && n === _this.end;
+                var uChar = _this.map[ukx][uky];
+                var uHeight = uChar.charCodeAt(0);
+                var nChar = _this.map[nx][ny];
+                var nHeight = nChar.charCodeAt(0);
+                var diff0 = uHeight - nHeight === 0;
+                var diff1 = Math.abs(uHeight - nHeight) === 1;
+                var diffSa = uk === _this.start && nChar === "a";
+                var diffzE = uChar === "z" && n === _this.end;
                 var nearNeighbor = diff0 || diff1 || diffSa || diffzE;
+                if (n === "3-7") {
+                    console.log({
+                        q: q,
+                        qks: qks,
+                        n: n,
+                        uChar: uChar,
+                        nChar: nChar,
+                        diff0: diff0,
+                        diff1: diff1,
+                        diffSa: diffSa,
+                        diffzE: diffzE,
+                        nearNeighbor: nearNeighbor,
+                        inList: qks.includes(n)
+                    });
+                }
                 // uk to n is same character
                 // uk to n is single character
                 // uk is S and n is a
@@ -98,11 +114,8 @@ var HeightMap = /** @class */ (function () {
                 }
             });
         };
-        var this_1 = this;
         while (q.length > 0) {
-            var state_1 = _loop_1();
-            if (typeof state_1 === "object")
-                return state_1.value;
+            _loop_1();
         }
         return [dist, prev];
     };
@@ -110,6 +123,7 @@ var HeightMap = /** @class */ (function () {
 }());
 var part1 = function () {
     hm.showMap();
+    // hm.dijkstra();
     console.log(hm.dijkstra());
 };
 var part2 = function () { };
