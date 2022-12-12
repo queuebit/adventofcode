@@ -50,9 +50,9 @@ var HeightMap = /** @class */ (function () {
                 return dist[a[0]] - dist[b[0]];
             });
             var _a = sq[0], uk = _a[0], _ = _a[1];
-            // if (uk === this.end) {
-            //   return [dist, prev];
-            // }
+            if (uk === this_1.end) {
+                return { value: [dist, prev] };
+            }
             q = sq.splice(1);
             var _b = uk.split("-").map(Number), ukx = _b[0], uky = _b[1];
             var neighbors = [];
@@ -115,8 +115,11 @@ var HeightMap = /** @class */ (function () {
                 }
             });
         };
+        var this_1 = this;
         while (q.length > 0) {
-            _loop_1();
+            var state_1 = _loop_1();
+            if (typeof state_1 === "object")
+                return state_1.value;
         }
         return [dist, prev];
     };
@@ -125,8 +128,46 @@ var HeightMap = /** @class */ (function () {
 var part1 = function () {
     hm.showMap();
     var _a = hm.dijkstra(), dist = _a[0], _ = _a[1];
+    // const [dist, prev] = hm.dijkstra();
+    // let journey: string[][] = [];
+    // Object.keys(prev).forEach((k, i) => {
+    //   const [kx, ky] = k.split("-").map(Number);
+    //   let jp: string = ".";
+    //   if (prev[k] === "undefined") {
+    //     jp = "S";
+    //   }
+    //   if (typeof prev[k] === "number") {
+    //     jp = ".";
+    //   } else {
+    //     const [px, py] = prev[k].toString().split("-").map(Number);
+    //     if (kx < px) {
+    //       jp = "v";
+    //     } else if (kx > px) {
+    //       jp = "^";
+    //     } else if (ky > py) {
+    //       jp = ">";
+    //     } else if (ky < py) {
+    //       jp = "<";
+    //     }
+    //   }
+    //   if (kx === journey.length) {
+    //     journey.push([]);
+    //   }
+    //   if (ky >= journey[kx].length) {
+    //     journey[kx].concat(Array(ky - journey[kx].length).fill("."));
+    //   }
+    //   journey[kx].push(jp);
+    // });
+    // journey.forEach((j) => console.log(j.join("")));
     var paths = Object.values(dist).filter(function (d) { return d !== 999999; });
     console.log(paths.sort(function (a, b) { return b - a; }));
+    /*
+    That's not the right answer; your answer is too low.
+    If you're stuck, make sure you're using the full input data;
+    there are also some general tips on the about page,
+    or you can ask for hints on the subreddit.
+    Please wait one minute before trying again. (You guessed 257.) [Return to Day 12]
+    */
 };
 var part2 = function () { };
 var hm = new HeightMap();

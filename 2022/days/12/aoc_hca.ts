@@ -59,9 +59,9 @@ class HeightMap {
         }
       );
       const [uk, _] = sq[0];
-      // if (uk === this.end) {
-      //   return [dist, prev];
-      // }
+      if (uk === this.end) {
+        return [dist, prev];
+      }
       q = sq.splice(1);
 
       const [ukx, uky] = uk.split("-").map(Number);
@@ -130,6 +130,40 @@ class HeightMap {
 const part1 = () => {
   hm.showMap();
   const [dist, _] = hm.dijkstra();
+
+  // const [dist, prev] = hm.dijkstra();
+  // let journey: string[][] = [];
+  // Object.keys(prev).forEach((k, i) => {
+  //   const [kx, ky] = k.split("-").map(Number);
+  //   let jp: string = ".";
+  //   if (prev[k] === "undefined") {
+  //     jp = "S";
+  //   }
+  //   if (typeof prev[k] === "number") {
+  //     jp = ".";
+  //   } else {
+  //     const [px, py] = prev[k].toString().split("-").map(Number);
+  //     if (kx < px) {
+  //       jp = "v";
+  //     } else if (kx > px) {
+  //       jp = "^";
+  //     } else if (ky > py) {
+  //       jp = ">";
+  //     } else if (ky < py) {
+  //       jp = "<";
+  //     }
+  //   }
+
+  //   if (kx === journey.length) {
+  //     journey.push([]);
+  //   }
+  //   if (ky >= journey[kx].length) {
+  //     journey[kx].concat(Array(ky - journey[kx].length).fill("."));
+  //   }
+  //   journey[kx].push(jp);
+  // });
+  // journey.forEach((j) => console.log(j.join("")));
+
   const paths = Object.values(dist).filter((d) => d !== 999999);
   console.log(paths.sort((a: number, b: number) => b - a));
   /* 
