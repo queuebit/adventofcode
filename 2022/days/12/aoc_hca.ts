@@ -38,7 +38,7 @@ class HeightMap {
     let q: [key: string, dist: number][] = [];
     let dist: { [key: string]: number } = {};
     let prev: { [key: string]: string } = {};
-    const NNN = 999;
+    const NNN = 999999;
 
     const height = this.map.length;
     const width = this.map[0].length;
@@ -54,10 +54,14 @@ class HeightMap {
 
     while (q.length > 0) {
       const sq = q.sort(
-        (a: [k: string, d: number], b: [k: string, d: number]) => a[1] - b[1]
+        (a: [k: string, d: number], b: [k: string, d: number]) => {
+          return dist[a[0]] - dist[b[0]];
+        }
       );
       const [uk, _] = sq[0];
-      console.log(q.length);
+      // if (uk === this.end) {
+      //   return [dist, prev];
+      // }
       q = sq.splice(1);
 
       const [ukx, uky] = uk.split("-").map(Number);
@@ -78,7 +82,6 @@ class HeightMap {
         neighbors.push(`${ukx}-${uky - 1}`);
         neighbors.push(`${ukx}-${uky + 1}`);
       }
-      console.log({ neighbors });
 
       neighbors.forEach((n) => {
         const qks = q.map((qi) => qi[0]);
@@ -93,21 +96,19 @@ class HeightMap {
         const diffSa = uk === this.start && nChar === "a";
         const diffzE = uChar === "z" && n === this.end;
         let nearNeighbor = diff0 || diff1 || diffSa || diffzE;
-        if (n === "3-7") {
-          console.log({
-            q,
-            qks,
-            n,
-            uChar,
-            nChar,
-            diff0,
-            diff1,
-            diffSa,
-            diffzE,
-            nearNeighbor,
-            inList: qks.includes(n),
-          });
-        }
+        // console.log({
+        //   q,
+        //   qks,
+        //   n,
+        //   uChar,
+        //   nChar,
+        //   diff0,
+        //   diff1,
+        //   diffSa,
+        //   diffzE,
+        //   nearNeighbor,
+        //   inList: qks.includes(n),
+        // });
         // uk to n is same character
         // uk to n is single character
         // uk is S and n is a
@@ -128,8 +129,16 @@ class HeightMap {
 
 const part1 = () => {
   hm.showMap();
-  // hm.dijkstra();
-  console.log(hm.dijkstra());
+  const [dist, _] = hm.dijkstra();
+  const paths = Object.values(dist).filter((d) => d !== 999999);
+  console.log(paths.sort((a: number, b: number) => b - a));
+  /* 
+  That's not the right answer; your answer is too low.
+  If you're stuck, make sure you're using the full input data;
+  there are also some general tips on the about page,
+  or you can ask for hints on the subreddit.
+  Please wait one minute before trying again. (You guessed 257.) [Return to Day 12]
+  */
 };
 const part2 = () => {};
 
