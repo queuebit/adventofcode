@@ -23,7 +23,8 @@ class HeightMap {
     const currentRow = this.map.length - 1;
     if (row.includes("S")) {
       this.start = `${currentRow}-${row.indexOf("S")}`;
-    } else if (row.includes("E")) {
+    }
+    if (row.includes("E")) {
       this.end = `${currentRow}-${row.indexOf("E")}`;
     }
   }
@@ -35,7 +36,7 @@ class HeightMap {
   }
 
   dijkstra(source: string = this.start) {
-    let q: [key: string, dist: number][] = [];
+    let q: string[] = [];
     let dist: { [key: string]: number } = {};
     let prev: { [key: string]: string } = {};
     const NNN = 999999;
@@ -47,21 +48,17 @@ class HeightMap {
         const v = `${r}-${c}`;
         dist[v] = NNN;
         prev[v] = "undefined";
-        q.push([v, dist[v]]);
+        q.push(v);
       }
     }
     dist[source] = 0;
 
-    while (q.length > 0) {
-      const sq = q.sort(
-        (a: [k: string, d: number], b: [k: string, d: number]) => {
-          return dist[a[0]] - dist[b[0]];
-        }
-      );
-      const [uk, _] = sq[0];
-      if (uk === this.end) {
-        return [dist, prev];
-      }
+    while (q.length > 300) {
+      const sq = q.sort((a, b) => {
+        return dist[a] - dist[b];
+      });
+      const uk = sq[0];
+      console.log(uk);
       q = sq.splice(1);
 
       const [ukx, uky] = uk.split("-").map(Number);
@@ -83,10 +80,9 @@ class HeightMap {
         neighbors.push(`${ukx}-${uky + 1}`);
       }
 
-      neighbors.forEach((n) => {
-        const qks = q.map((qi) => qi[0]);
+      neighbors.forEach((v) => {
         let alt: number;
-        const [nx, ny] = n.split("-").map(Number);
+        const [nx, ny] = v.split("-").map(Number);
         const uChar = this.map[ukx][uky];
         const uHeight = uChar.charCodeAt(0);
         const nChar = this.map[nx][ny];
@@ -94,30 +90,34 @@ class HeightMap {
         const diff0 = uHeight - nHeight === 0;
         const diff1 = Math.abs(uHeight - nHeight) === 1;
         const diffSa = uk === this.start && nChar === "a";
-        const diffzE = uChar === "z" && n === this.end;
+        const diffzE = uChar === "z" && v === this.end;
         let nearNeighbor = diff0 || diff1 || diffSa || diffzE;
-        // console.log({
-        //   q,
-        //   qks,
-        //   n,
-        //   uChar,
-        //   nChar,
-        //   diff0,
-        //   diff1,
-        //   diffSa,
-        //   diffzE,
-        //   nearNeighbor,
-        //   inList: qks.includes(n),
-        // });
+        if (uChar === "y" && nChar === "z") {
+          console.log("YZ");
+          console.log({
+            q,
+            uk,
+            v,
+            uChar,
+            nChar,
+            diff0,
+            diff1,
+            diffSa,
+            diffzE,
+            nearNeighbor,
+            inList: q.includes(v),
+          });
+        }
         // uk to n is same character
         // uk to n is single character
         // uk is S and n is a
         // uk is z and n is z
-        if (qks.includes(n) && nearNeighbor) {
+        if (q.includes(v) && nearNeighbor) {
           alt = dist[uk] + 1;
-          if (alt < dist[n]) {
-            dist[n] = alt;
-            prev[n] = uk;
+          console.log({ alt, uk, v });
+          if (alt < dist[v]) {
+            dist[v] = alt;
+            prev[v] = uk;
           }
         }
       });
@@ -129,43 +129,18 @@ class HeightMap {
 
 const part1 = () => {
   hm.showMap();
-  const [dist, _] = hm.dijkstra();
+  const [dist, prev] = hm.dijkstra();
 
-  // const [dist, prev] = hm.dijkstra();
-  // let journey: string[][] = [];
-  // Object.keys(prev).forEach((k, i) => {
-  //   const [kx, ky] = k.split("-").map(Number);
-  //   let jp: string = ".";
-  //   if (prev[k] === "undefined") {
-  //     jp = "S";
-  //   }
-  //   if (typeof prev[k] === "number") {
-  //     jp = ".";
-  //   } else {
-  //     const [px, py] = prev[k].toString().split("-").map(Number);
-  //     if (kx < px) {
-  //       jp = "v";
-  //     } else if (kx > px) {
-  //       jp = "^";
-  //     } else if (ky > py) {
-  //       jp = ">";
-  //     } else if (ky < py) {
-  //       jp = "<";
-  //     }
-  //   }
-
-  //   if (kx === journey.length) {
-  //     journey.push([]);
-  //   }
-  //   if (ky >= journey[kx].length) {
-  //     journey[kx].concat(Array(ky - journey[kx].length).fill("."));
-  //   }
-  //   journey[kx].push(jp);
-  // });
-  // journey.forEach((j) => console.log(j.join("")));
-
-  const paths = Object.values(dist).filter((d) => d !== 999999);
-  console.log(paths.sort((a: number, b: number) => b - a));
+  console.log(hm.start);
+  console.log(hm.end);
+  console.log(JSON.stringify(prev));
+  console.log(JSON.stringify(dist));
+  console.log(
+    Object.values(dist)
+      .filter((d) => d !== 999999)
+      .sort((a, b) => b - a)
+  );
+  console.log(dist[hm.end]);
   /* 
   That's not the right answer; your answer is too low.
   If you're stuck, make sure you're using the full input data;

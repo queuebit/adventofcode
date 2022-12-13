@@ -18,7 +18,7 @@ var HeightMap = /** @class */ (function () {
         if (row.includes("S")) {
             this.start = "".concat(currentRow, "-").concat(row.indexOf("S"));
         }
-        else if (row.includes("E")) {
+        if (row.includes("E")) {
             this.end = "".concat(currentRow, "-").concat(row.indexOf("E"));
         }
     };
@@ -41,20 +41,18 @@ var HeightMap = /** @class */ (function () {
                 var v = "".concat(r, "-").concat(c);
                 dist[v] = NNN;
                 prev[v] = "undefined";
-                q.push([v, dist[v]]);
+                q.push(v);
             }
         }
         dist[source] = 0;
         var _loop_1 = function () {
             var sq = q.sort(function (a, b) {
-                return dist[a[0]] - dist[b[0]];
+                return dist[a] - dist[b];
             });
-            var _a = sq[0], uk = _a[0], _ = _a[1];
-            if (uk === this_1.end) {
-                return { value: [dist, prev] };
-            }
+            var uk = sq[0];
+            console.log(uk);
             q = sq.splice(1);
-            var _b = uk.split("-").map(Number), ukx = _b[0], uky = _b[1];
+            var _a = uk.split("-").map(Number), ukx = _a[0], uky = _a[1];
             var neighbors = [];
             if (ukx === 0) {
                 neighbors.push("".concat(ukx + 1, "-").concat(uky));
@@ -76,10 +74,9 @@ var HeightMap = /** @class */ (function () {
                 neighbors.push("".concat(ukx, "-").concat(uky - 1));
                 neighbors.push("".concat(ukx, "-").concat(uky + 1));
             }
-            neighbors.forEach(function (n) {
-                var qks = q.map(function (qi) { return qi[0]; });
+            neighbors.forEach(function (v) {
                 var alt;
-                var _a = n.split("-").map(Number), nx = _a[0], ny = _a[1];
+                var _a = v.split("-").map(Number), nx = _a[0], ny = _a[1];
                 var uChar = _this.map[ukx][uky];
                 var uHeight = uChar.charCodeAt(0);
                 var nChar = _this.map[nx][ny];
@@ -87,39 +84,40 @@ var HeightMap = /** @class */ (function () {
                 var diff0 = uHeight - nHeight === 0;
                 var diff1 = Math.abs(uHeight - nHeight) === 1;
                 var diffSa = uk === _this.start && nChar === "a";
-                var diffzE = uChar === "z" && n === _this.end;
+                var diffzE = uChar === "z" && v === _this.end;
                 var nearNeighbor = diff0 || diff1 || diffSa || diffzE;
-                // console.log({
-                //   q,
-                //   qks,
-                //   n,
-                //   uChar,
-                //   nChar,
-                //   diff0,
-                //   diff1,
-                //   diffSa,
-                //   diffzE,
-                //   nearNeighbor,
-                //   inList: qks.includes(n),
-                // });
+                if (uChar === "y" && nChar === "z") {
+                    console.log("YZ");
+                    console.log({
+                        q: q,
+                        uk: uk,
+                        v: v,
+                        uChar: uChar,
+                        nChar: nChar,
+                        diff0: diff0,
+                        diff1: diff1,
+                        diffSa: diffSa,
+                        diffzE: diffzE,
+                        nearNeighbor: nearNeighbor,
+                        inList: q.includes(v)
+                    });
+                }
                 // uk to n is same character
                 // uk to n is single character
                 // uk is S and n is a
                 // uk is z and n is z
-                if (qks.includes(n) && nearNeighbor) {
+                if (q.includes(v) && nearNeighbor) {
                     alt = dist[uk] + 1;
-                    if (alt < dist[n]) {
-                        dist[n] = alt;
-                        prev[n] = uk;
+                    console.log({ alt: alt, uk: uk, v: v });
+                    if (alt < dist[v]) {
+                        dist[v] = alt;
+                        prev[v] = uk;
                     }
                 }
             });
         };
-        var this_1 = this;
-        while (q.length > 0) {
-            var state_1 = _loop_1();
-            if (typeof state_1 === "object")
-                return state_1.value;
+        while (q.length > 300) {
+            _loop_1();
         }
         return [dist, prev];
     };
@@ -127,40 +125,15 @@ var HeightMap = /** @class */ (function () {
 }());
 var part1 = function () {
     hm.showMap();
-    var _a = hm.dijkstra(), dist = _a[0], _ = _a[1];
-    // const [dist, prev] = hm.dijkstra();
-    // let journey: string[][] = [];
-    // Object.keys(prev).forEach((k, i) => {
-    //   const [kx, ky] = k.split("-").map(Number);
-    //   let jp: string = ".";
-    //   if (prev[k] === "undefined") {
-    //     jp = "S";
-    //   }
-    //   if (typeof prev[k] === "number") {
-    //     jp = ".";
-    //   } else {
-    //     const [px, py] = prev[k].toString().split("-").map(Number);
-    //     if (kx < px) {
-    //       jp = "v";
-    //     } else if (kx > px) {
-    //       jp = "^";
-    //     } else if (ky > py) {
-    //       jp = ">";
-    //     } else if (ky < py) {
-    //       jp = "<";
-    //     }
-    //   }
-    //   if (kx === journey.length) {
-    //     journey.push([]);
-    //   }
-    //   if (ky >= journey[kx].length) {
-    //     journey[kx].concat(Array(ky - journey[kx].length).fill("."));
-    //   }
-    //   journey[kx].push(jp);
-    // });
-    // journey.forEach((j) => console.log(j.join("")));
-    var paths = Object.values(dist).filter(function (d) { return d !== 999999; });
-    console.log(paths.sort(function (a, b) { return b - a; }));
+    var _a = hm.dijkstra(), dist = _a[0], prev = _a[1];
+    console.log(hm.start);
+    console.log(hm.end);
+    console.log(JSON.stringify(prev));
+    console.log(JSON.stringify(dist));
+    console.log(Object.values(dist)
+        .filter(function (d) { return d !== 999999; })
+        .sort(function (a, b) { return b - a; }));
+    console.log(dist[hm.end]);
     /*
     That's not the right answer; your answer is too low.
     If you're stuck, make sure you're using the full input data;
