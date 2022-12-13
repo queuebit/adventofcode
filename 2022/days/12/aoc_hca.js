@@ -82,12 +82,12 @@ var HeightMap = /** @class */ (function () {
                 var nChar = _this.map[nx][ny];
                 var nHeight = nChar.charCodeAt(0);
                 var diff0 = uHeight - nHeight === 0;
-                var diff1 = Math.abs(uHeight - nHeight) === 1;
+                var diff1 = uHeight - nHeight === -1;
                 var diffSa = uk === _this.start && nChar === "a";
                 var diffzE = uChar === "z" && v === _this.end;
                 var nearNeighbor = diff0 || diff1 || diffSa || diffzE;
-                if (uChar === "y" && nChar === "z") {
-                    console.log("YZ");
+                if (v === "29-131") {
+                    console.log("TKTK");
                     console.log({
                         q: q,
                         uk: uk,
@@ -116,7 +116,7 @@ var HeightMap = /** @class */ (function () {
                 }
             });
         };
-        while (q.length > 300) {
+        while (q.length > 0) {
             _loop_1();
         }
         return [dist, prev];
@@ -126,13 +126,17 @@ var HeightMap = /** @class */ (function () {
 var part1 = function () {
     hm.showMap();
     var _a = hm.dijkstra(), dist = _a[0], prev = _a[1];
-    console.log(hm.start);
-    console.log(hm.end);
-    console.log(JSON.stringify(prev));
-    console.log(JSON.stringify(dist));
-    console.log(Object.values(dist)
-        .filter(function (d) { return d !== 999999; })
-        .sort(function (a, b) { return b - a; }));
+    // let node = "32-148"; // e
+    // let node = "34-140"; // l
+    var node = "28-131"; // l
+    console.log();
+    console.log("==== PATH FINDING ====");
+    console.log(node);
+    while (prev[node]) {
+        node = prev[node] !== 999999 ? prev[node] : "S";
+        console.log(node);
+    }
+    console.log();
     console.log(dist[hm.end]);
     /*
     That's not the right answer; your answer is too low.
@@ -141,6 +145,7 @@ var part1 = function () {
     or you can ask for hints on the subreddit.
     Please wait one minute before trying again. (You guessed 257.) [Return to Day 12]
     */
+    // https://mastodon.social/@joshburnett@fosstodon.org/109506776118491499
 };
 var part2 = function () { };
 var hm = new HeightMap();

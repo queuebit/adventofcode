@@ -53,7 +53,7 @@ class HeightMap {
     }
     dist[source] = 0;
 
-    while (q.length > 300) {
+    while (q.length > 0) {
       const sq = q.sort((a, b) => {
         return dist[a] - dist[b];
       });
@@ -88,12 +88,12 @@ class HeightMap {
         const nChar = this.map[nx][ny];
         const nHeight = nChar.charCodeAt(0);
         const diff0 = uHeight - nHeight === 0;
-        const diff1 = Math.abs(uHeight - nHeight) === 1;
+        const diff1 = uHeight - nHeight === -1;
         const diffSa = uk === this.start && nChar === "a";
         const diffzE = uChar === "z" && v === this.end;
         let nearNeighbor = diff0 || diff1 || diffSa || diffzE;
-        if (uChar === "y" && nChar === "z") {
-          console.log("YZ");
+        if (v === "29-131") {
+          console.log("TKTK");
           console.log({
             q,
             uk,
@@ -131,15 +131,19 @@ const part1 = () => {
   hm.showMap();
   const [dist, prev] = hm.dijkstra();
 
-  console.log(hm.start);
-  console.log(hm.end);
-  console.log(JSON.stringify(prev));
-  console.log(JSON.stringify(dist));
-  console.log(
-    Object.values(dist)
-      .filter((d) => d !== 999999)
-      .sort((a, b) => b - a)
-  );
+  // let node = "32-148"; // e
+  // let node = "34-140"; // l
+  let node = "28-131"; // l
+
+  console.log();
+  console.log(`==== PATH FINDING ====`);
+  console.log(node);
+  while (prev[node]) {
+    node = prev[node] !== 999999 ? prev[node] : "S";
+    console.log(node);
+  }
+  console.log();
+
   console.log(dist[hm.end]);
   /* 
   That's not the right answer; your answer is too low.
