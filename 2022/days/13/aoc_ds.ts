@@ -16,7 +16,7 @@ const compare: (a: number[] | number, b: number[] | number) => number = (
   a: number[] | number,
   b: number[] | number
 ) => {
-  console.log(`  - Compare ${a} vs ${b}`);
+  console.log(`  - Compare ${JSON.stringify(a)} vs ${JSON.stringify(b)}`);
   if (typeof a === "number" && typeof b === "number") {
     if (a < b) {
       console.log(` .   - ${a} < ${b} - RIGHT ORDER`);
@@ -28,12 +28,12 @@ const compare: (a: number[] | number, b: number[] | number) => number = (
       return ORDER.wrong;
     }
   } else if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length === 0) {
+    if (a.length === 0 && b.length > 0) {
       console.log(` .   - left is shorter - RIGHT ORDER`);
       return ORDER.right;
-    } else if (b.length === 0) {
-      console.log(` .   - right is shorter - WRONG ORDER`);
-      return ORDER.wrong;
+      // } else if (b.length === 0 && a.length > 0) {
+      //   console.log(` .   - right is shorter - WRONG ORDER`);
+      //   return ORDER.wrong;
     }
     for (let ai = 0; ai < a.length; ai++) {
       const comp = compare(a[ai], b[ai]);
@@ -73,7 +73,6 @@ const part1 = (list: number[][]) => {
     const a = list[i];
     const b = list[i + 1];
     console.log(`== Pair ${i / 2 + 1} ==`);
-    console.log(`- Compare ${a} vs ${b}`);
     const comp = compare(a, b);
     console.log(comp);
 
@@ -96,13 +95,20 @@ const part1 = (list: number[][]) => {
   or you can ask for hints on the subreddit.
   Please wait one minute before trying again. (You guessed 6644.) [Return to Day 13]
   */
+  /*
+  That's not the right answer; your answer is too low.
+  If you're stuck, make sure you're using the full input data;
+  there are also some general tips on the about page,
+  or you can ask for hints on the subreddit.
+  Please wait one minute before trying again. (You guessed 6281.) [Return to Day 13]
+  */
 };
 const part2 = () => {};
 
 let list: number[][] = [];
 rl.on("line", (line: string) => {
   if (line.length > 0) {
-    list.push(eval(line.trim()));
+    list.push(JSON.parse(line.trim()));
   }
 });
 
