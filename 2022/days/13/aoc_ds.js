@@ -1,4 +1,13 @@
 "use strict";
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var parse = require("path").parse;
 var readline = require("readline");
 var rl = readline.createInterface({
@@ -7,8 +16,8 @@ var rl = readline.createInterface({
     terminal: false
 });
 var ORDER = {
-    right: 1,
-    wrong: -1,
+    right: -1,
+    wrong: 1,
     "continue": 0
 };
 var compare = function (a, b) {
@@ -104,7 +113,20 @@ var part1 = function (list) {
     Please wait one minute before trying again. (You guessed 6281.) [Return to Day 13]
     */
 };
-var part2 = function () { };
+var part2 = function (list) {
+    var d1 = [[2]];
+    var d2 = [[6]];
+    var fullList = __spreadArray(__spreadArray([], list, true), [d1, d2], false);
+    var sortedSignals = fullList.sort(function (a, b) { return compare(a, b); });
+    var di = [];
+    sortedSignals.forEach(function (signal, i) {
+        // console.log(signal);
+        if (signal === d1 || signal === d2) {
+            di.push(i + 1);
+        }
+    });
+    console.log(di.reduce(function (a, b) { return a * b; }, 1));
+};
 var list = [];
 rl.on("line", function (line) {
     if (line.length > 0) {
@@ -113,5 +135,5 @@ rl.on("line", function (line) {
 });
 rl.once("close", function () {
     part1(list);
-    part2();
+    part2(list);
 });

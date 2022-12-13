@@ -8,13 +8,16 @@ const rl = readline.createInterface({
 });
 
 const ORDER: { [key: string]: number } = {
-  right: 1,
-  wrong: -1,
+  right: -1,
+  wrong: 1,
   continue: 0,
 };
-const compare: (a: number[] | number, b: number[] | number) => number = (
-  a: number[] | number,
-  b: number[] | number
+const compare: (
+  a: number[][] | number[] | number,
+  b: number[][] | number[] | number
+) => number = (
+  a: number[][] | number[] | number,
+  b: number[][] | number[] | number
 ) => {
   console.log(`  - Compare ${JSON.stringify(a)} vs ${JSON.stringify(b)}`);
   if (typeof a === "number" && typeof b === "number") {
@@ -103,7 +106,20 @@ const part1 = (list: number[][]) => {
   Please wait one minute before trying again. (You guessed 6281.) [Return to Day 13]
   */
 };
-const part2 = () => {};
+const part2 = (list: number[][]) => {
+  const d1 = [[2]];
+  const d2 = [[6]];
+  const fullList = [...list, d1, d2];
+  const sortedSignals = fullList.sort((a, b) => compare(a, b));
+  let di: number[] = [];
+  sortedSignals.forEach((signal, i) => {
+    // console.log(signal);
+    if (signal === d1 || signal === d2) {
+      di.push(i + 1);
+    }
+  });
+  console.log(di.reduce((a, b) => a * b, 1));
+};
 
 let list: number[][] = [];
 rl.on("line", (line: string) => {
@@ -114,5 +130,5 @@ rl.on("line", (line: string) => {
 
 rl.once("close", () => {
   part1(list);
-  part2();
+  part2(list);
 });
