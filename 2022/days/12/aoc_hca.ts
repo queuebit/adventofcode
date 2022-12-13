@@ -148,6 +148,7 @@ const part1 = () => {
   or you can ask for hints on the subreddit.
   Please wait one minute before trying again. (You guessed 257.) [Return to Day 12]
   */
+  // https://mastodon.social/@joshburnett@fosstodon.org/109506776118491499
 };
 const part2 = () => {};
 
