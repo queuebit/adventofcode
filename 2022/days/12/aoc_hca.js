@@ -6,6 +6,20 @@ var rl = readline.createInterface({
     output: process.stdout,
     terminal: false
 });
+// let node = "32-148"; // e
+// let node = "35-140"; // e
+// let node = "34-140"; // l
+// let node = "32-132"; // f
+// let DEBUG = "31-132"; // g
+// let DEBUG = "27-124"; // g
+// let DEBUG = "25-124"; // h
+// let DEBUG = "18-126"; // h
+// let DEBUG = "17-126"; // i
+// let DEBUG = "9-128"; // i
+// let DEBUG = "9-129"; // j - ENDS, with no k
+// let DEBUG = "28-147"; // j - alt is 1000000
+// let DEBUG = "29-147"; // k - alt is 1000000
+var DEBUG = "19-148"; // i
 var HeightMap = /** @class */ (function () {
     function HeightMap() {
         this.map = [];
@@ -86,8 +100,8 @@ var HeightMap = /** @class */ (function () {
                 var diffSa = uk === _this.start && nChar === "a";
                 var diffzE = uChar === "z" && v === _this.end;
                 var nearNeighbor = diff0 || diff1 || diffSa || diffzE;
-                if (v === "29-131") {
-                    console.log("TKTK");
+                if (uk === DEBUG) {
+                    console.log("DEBUG");
                     console.log({
                         q: q,
                         uk: uk,
@@ -126,14 +140,12 @@ var HeightMap = /** @class */ (function () {
 var part1 = function () {
     hm.showMap();
     var _a = hm.dijkstra(), dist = _a[0], prev = _a[1];
-    // let node = "32-148"; // e
-    // let node = "34-140"; // l
-    var node = "28-131"; // l
+    var node = DEBUG;
     console.log();
     console.log("==== PATH FINDING ====");
     console.log(node);
     while (prev[node]) {
-        node = prev[node] !== 999999 ? prev[node] : "S";
+        node = prev[node].toString();
         console.log(node);
     }
     console.log();
