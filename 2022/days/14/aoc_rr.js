@@ -8,59 +8,59 @@ var rl = readline.createInterface({
 });
 var Cave = /** @class */ (function () {
     function Cave(rockWalls) {
-        var _this = this;
         this.cavern = {};
         this.sand = 0;
-        var _loop_1 = function (rockWall) {
-            var from;
-            rockWall.forEach(function (_a, i) {
-                var px = _a[0], py = _a[1];
-                if (i === 0) {
-                    from = [px, py];
-                }
-                else {
-                    var fx = from[0], fy = from[1];
-                    if (fx === px) {
-                        var cTest = void 0;
-                        var nextBy = void 0;
-                        if (fy < py) {
-                            cTest = function (y) { return y <= py; };
-                            nextBy = 1;
-                        }
-                        else {
-                            cTest = function (y) { return y >= py; };
-                            nextBy = -1;
-                        }
-                        for (var y = fy; cTest(y); y += nextBy) {
-                            var n = _this.coordToString([px, y]);
-                            _this.cavern[n] = "#";
-                        }
-                    }
-                    else if (fy === py) {
-                        var cTest = void 0;
-                        var nextBy = void 0;
-                        if (fx < px) {
-                            cTest = function (x) { return x <= px; };
-                            nextBy = 1;
-                        }
-                        else {
-                            cTest = function (x) { return x >= px; };
-                            nextBy = -1;
-                        }
-                        for (var x = fx; cTest(x); x += nextBy) {
-                            var n = _this.coordToString([x, py]);
-                            _this.cavern[n] = "#";
-                        }
-                    }
-                }
-                from = [px, py];
-            });
-        };
         for (var _i = 0, rockWalls_1 = rockWalls; _i < rockWalls_1.length; _i++) {
             var rockWall = rockWalls_1[_i];
-            _loop_1(rockWall);
+            this.addRockWall(rockWall);
         }
     }
+    Cave.prototype.addRockWall = function (rockWall) {
+        var _this = this;
+        var from;
+        rockWall.forEach(function (_a, i) {
+            var px = _a[0], py = _a[1];
+            if (i === 0) {
+                from = [px, py];
+            }
+            else {
+                var fx = from[0], fy = from[1];
+                if (fx === px) {
+                    var cTest = void 0;
+                    var nextBy = void 0;
+                    if (fy < py) {
+                        cTest = function (y) { return y <= py; };
+                        nextBy = 1;
+                    }
+                    else {
+                        cTest = function (y) { return y >= py; };
+                        nextBy = -1;
+                    }
+                    for (var y = fy; cTest(y); y += nextBy) {
+                        var n = _this.coordToString([px, y]);
+                        _this.cavern[n] = "#";
+                    }
+                }
+                else if (fy === py) {
+                    var cTest = void 0;
+                    var nextBy = void 0;
+                    if (fx < px) {
+                        cTest = function (x) { return x <= px; };
+                        nextBy = 1;
+                    }
+                    else {
+                        cTest = function (x) { return x >= px; };
+                        nextBy = -1;
+                    }
+                    for (var x = fx; cTest(x); x += nextBy) {
+                        var n = _this.coordToString([x, py]);
+                        _this.cavern[n] = "#";
+                    }
+                }
+            }
+            from = [px, py];
+        });
+    };
     Cave.prototype.coordToString = function (c) {
         var PAD = 9;
         var cx = c[0], cy = c[1];
@@ -119,6 +119,9 @@ var Cave = /** @class */ (function () {
         if (!this.isBottom(id)) {
             return this.sand;
         }
+        else if (this.cavern[id]) {
+            return this.sand;
+        }
         else {
             var sits = this.fallsDown(id);
             if (!this.fallLeft(sits)) {
@@ -129,6 +132,14 @@ var Cave = /** @class */ (function () {
             }
             return this.sand;
         }
+    };
+    Cave.prototype.maxRockDepth = function () {
+        var _this = this;
+        return Math.max.apply(Math, Object.keys(this.cavern)
+            .filter(function (c) {
+            return _this.cavern[c] === "#";
+        })
+            .map(function (c) { return _this.stringToCoord(c)[1]; }));
     };
     Cave.prototype.showCavern = function () {
         for (var y = 0; y < 150; y++) {
@@ -154,8 +165,21 @@ var Cave = /** @class */ (function () {
     };
     return Cave;
 }());
-var part1 = function () { };
-var part2 = function () { };
+var part1 = function () {
+    var c = new Cave(lines);
+    console.log(c.fill());
+    // c.showCavern();
+};
+var part2 = function () {
+    var c = new Cave(lines);
+    var maxDepth = c.maxRockDepth();
+    c.addRockWall([
+        [450, maxDepth + 2],
+        [650, maxDepth + 2],
+    ]);
+    console.log(c.fill());
+    c.showCavern();
+};
 var lines = [];
 rl.on("line", function (line) {
     var points = line
@@ -164,16 +188,6 @@ rl.on("line", function (line) {
     lines.push(points);
 });
 rl.once("close", function () {
-    var c = new Cave(lines);
-    console.log(c.fill());
-    c.showCavern();
-    /*
-    That's not the right answer; your answer is too low.
-    If you're stuck, make sure you're using the full input data;
-    there are also some general tips on the about page,
-    or you can ask for hints on the subreddit.
-    Please wait one minute before trying again. (You guessed 540.) [Return to Day 14]
-    */
     part1();
     part2();
 });

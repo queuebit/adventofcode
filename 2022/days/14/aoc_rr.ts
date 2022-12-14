@@ -10,47 +10,52 @@ const rl = readline.createInterface({
 class Cave {
   cavern: { [key: string]: string } = {};
   sand: number = 0;
+
   constructor(rockWalls: Coord[][]) {
     for (const rockWall of rockWalls) {
-      let from: Coord;
-      rockWall.forEach(([px, py], i) => {
-        if (i === 0) {
-          from = [px, py];
-        } else {
-          const [fx, fy] = from;
-          if (fx === px) {
-            let cTest: (n: number) => boolean;
-            let nextBy: number;
-            if (fy < py) {
-              cTest = (y) => y <= py;
-              nextBy = 1;
-            } else {
-              cTest = (y) => y >= py;
-              nextBy = -1;
-            }
-            for (let y = fy; cTest(y); y += nextBy) {
-              const n = this.coordToString([px, y]);
-              this.cavern[n] = "#";
-            }
-          } else if (fy === py) {
-            let cTest: (n: number) => boolean;
-            let nextBy: number;
-            if (fx < px) {
-              cTest = (x) => x <= px;
-              nextBy = 1;
-            } else {
-              cTest = (x) => x >= px;
-              nextBy = -1;
-            }
-            for (let x = fx; cTest(x); x += nextBy) {
-              const n = this.coordToString([x, py]);
-              this.cavern[n] = "#";
-            }
+      this.addRockWall(rockWall);
+    }
+  }
+
+  addRockWall(rockWall: Coord[]) {
+    let from: Coord;
+    rockWall.forEach(([px, py], i) => {
+      if (i === 0) {
+        from = [px, py];
+      } else {
+        const [fx, fy] = from;
+        if (fx === px) {
+          let cTest: (n: number) => boolean;
+          let nextBy: number;
+          if (fy < py) {
+            cTest = (y) => y <= py;
+            nextBy = 1;
+          } else {
+            cTest = (y) => y >= py;
+            nextBy = -1;
+          }
+          for (let y = fy; cTest(y); y += nextBy) {
+            const n = this.coordToString([px, y]);
+            this.cavern[n] = "#";
+          }
+        } else if (fy === py) {
+          let cTest: (n: number) => boolean;
+          let nextBy: number;
+          if (fx < px) {
+            cTest = (x) => x <= px;
+            nextBy = 1;
+          } else {
+            cTest = (x) => x >= px;
+            nextBy = -1;
+          }
+          for (let x = fx; cTest(x); x += nextBy) {
+            const n = this.coordToString([x, py]);
+            this.cavern[n] = "#";
           }
         }
-        from = [px, py];
-      });
-    }
+      }
+      from = [px, py];
+    });
   }
 
   coordToString(c: Coord) {
@@ -116,6 +121,8 @@ class Cave {
   gravity(id: string) {
     if (!this.isBottom(id)) {
       return this.sand;
+    } else if (this.cavern[id]) {
+      return this.sand;
     } else {
       const sits = this.fallsDown(id);
       if (!this.fallLeft(sits)) {
@@ -126,6 +133,16 @@ class Cave {
       }
       return this.sand;
     }
+  }
+
+  maxRockDepth() {
+    return Math.max(
+      ...Object.keys(this.cavern)
+        .filter((c) => {
+          return this.cavern[c] === "#";
+        })
+        .map((c) => this.stringToCoord(c)[1])
+    );
   }
 
   showCavern() {
@@ -150,8 +167,21 @@ class Cave {
     }
   }
 }
-const part1 = () => {};
-const part2 = () => {};
+const part1 = () => {
+  const c = new Cave(lines);
+  console.log(c.fill());
+  // c.showCavern();
+};
+const part2 = () => {
+  const c = new Cave(lines);
+  const maxDepth = c.maxRockDepth();
+  c.addRockWall([
+    [450, maxDepth + 2],
+    [650, maxDepth + 2],
+  ]);
+  console.log(c.fill());
+  c.showCavern();
+};
 
 type Coord = [x: number, y: number];
 let lines: Coord[][] = [];
@@ -161,18 +191,7 @@ rl.on("line", (line: string) => {
     .map((p) => p.split(",").map(Number) as Coord);
   lines.push(points);
 });
-
 rl.once("close", () => {
-  const c = new Cave(lines);
-  console.log(c.fill());
-  c.showCavern();
-  /*
-  That's not the right answer; your answer is too low.
-  If you're stuck, make sure you're using the full input data;
-  there are also some general tips on the about page,
-  or you can ask for hints on the subreddit.
-  Please wait one minute before trying again. (You guessed 540.) [Return to Day 14]
-  */
   part1();
   part2();
 });
