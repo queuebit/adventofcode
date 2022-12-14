@@ -10,6 +10,7 @@ var Cave = /** @class */ (function () {
     function Cave(rockWalls) {
         var _this = this;
         this.cavern = {};
+        this.sand = 0;
         var _loop_1 = function (rockWall) {
             var from;
             rockWall.forEach(function (_a, i) {
@@ -31,7 +32,7 @@ var Cave = /** @class */ (function () {
                             nextBy = -1;
                         }
                         for (var y = fy; cTest(y); y += nextBy) {
-                            var n = _this.coordToNumber([px, y]);
+                            var n = _this.coordToString([px, y]);
                             _this.cavern[n] = "#";
                         }
                     }
@@ -47,7 +48,7 @@ var Cave = /** @class */ (function () {
                             nextBy = -1;
                         }
                         for (var x = fx; cTest(x); x += nextBy) {
-                            var n = _this.coordToNumber([x, py]);
+                            var n = _this.coordToString([x, py]);
                             _this.cavern[n] = "#";
                         }
                     }
@@ -60,9 +61,52 @@ var Cave = /** @class */ (function () {
             _loop_1(rockWall);
         }
     }
-    Cave.prototype.coordToNumber = function (c) {
+    Cave.prototype.coordToString = function (c) {
+        var PAD = 9;
         var cx = c[0], cy = c[1];
-        return cx * 1e6 + cy;
+        return (cx * 1e6 + cy).toString().padStart(PAD, "0");
+    };
+    Cave.prototype.stringToCoord = function (id) {
+        var x = Math.floor(Number(id) / 1e6);
+        var y = Number(id) - x * 1e6;
+        return [x, y];
+    };
+    Cave.prototype.oneUp = function (id) {
+        var _a = this.stringToCoord(id), x = _a[0], y = _a[1];
+        return this.coordToString([x, y - 1]);
+    };
+    Cave.prototype.isBottom = function (x) {
+        var XPAD = 3;
+        var xStr = x.toString().padStart(XPAD, "0");
+        return (Object.keys(this.cavern).filter(function (c) { return c.startsWith(xStr); }).length > 0);
+    };
+    Cave.prototype.fallsDown = function (x) {
+        var XPAD = 3;
+        var xStr = x.toString().padStart(XPAD, "0");
+        return this.oneUp(Object.keys(this.cavern)
+            .filter(function (c) { return c.startsWith(xStr); })
+            .sort()[0]);
+    };
+    Cave.prototype.gravity = function (x) {
+        if (!this.isBottom(x)) {
+            return this.sand;
+        }
+        else {
+            console.log(this.fallsDown(x));
+            // gravity - fall down
+            // block down - fall left
+            // block left - fall right
+            // blocked - sand++
+            // falls continuously - end and return sand
+            return this.sand;
+        }
+    };
+    Cave.prototype.fill = function () {
+        var fallsFrom = 500;
+        var x = fallsFrom;
+        while (true) {
+            return this.gravity(x);
+        }
     };
     return Cave;
 }());
@@ -76,9 +120,8 @@ rl.on("line", function (line) {
     lines.push(points);
 });
 rl.once("close", function () {
-    console.log(lines);
     var c = new Cave(lines);
-    console.log(c.cavern);
+    console.log(c.fill());
     part1();
     part2();
 });

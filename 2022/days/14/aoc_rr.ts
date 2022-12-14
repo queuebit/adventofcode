@@ -8,7 +8,8 @@ const rl = readline.createInterface({
 });
 
 class Cave {
-  cavern: { [key: number]: string } = {};
+  cavern: { [key: string]: string } = {};
+  sand: number = 0;
   constructor(rockWalls: Coord[][]) {
     for (const rockWall of rockWalls) {
       let from: Coord;
@@ -28,7 +29,7 @@ class Cave {
               nextBy = -1;
             }
             for (let y = fy; cTest(y); y += nextBy) {
-              const n = this.coordToNumber([px, y]);
+              const n = this.coordToString([px, y]);
               this.cavern[n] = "#";
             }
           } else if (fy === py) {
@@ -42,7 +43,7 @@ class Cave {
               nextBy = -1;
             }
             for (let x = fx; cTest(x); x += nextBy) {
-              const n = this.coordToNumber([x, py]);
+              const n = this.coordToString([x, py]);
               this.cavern[n] = "#";
             }
           }
@@ -52,9 +53,88 @@ class Cave {
     }
   }
 
-  coordToNumber(c: Coord) {
+  coordToString(c: Coord) {
+    const PAD = 9;
     const [cx, cy] = c;
-    return cx * 1e6 + cy;
+    return (cx * 1e6 + cy).toString().padStart(PAD, "0");
+  }
+
+  stringToCoord(id: string) {
+    const x = Math.floor(Number(id) / 1e6);
+    const y = Number(id) - x * 1e6;
+    return [x, y];
+  }
+
+  oneUp(id: string) {
+    const [x, y] = this.stringToCoord(id);
+    return this.coordToString([x, y - 1]);
+  }
+
+  isBottom(x: number) {
+    const XPAD = 3;
+    const xStr = x.toString().padStart(XPAD, "0");
+    return (
+      Object.keys(this.cavern).filter((c) => c.startsWith(xStr)).length > 0
+    );
+  }
+
+  fallLeft(id: string) {
+    const [x, y] = this.stringToCoord(id);
+    const left = this.coordToString([x - 1, y + 1]);
+    if (left in this.cavern) {
+      return false;
+    } else {
+      this.cavern[left] = "o";
+      return true;
+    }
+  }
+  fallRight(id: string) {
+    const [x, y] = this.stringToCoord(id);
+    const right = this.coordToString([x + 1, y + 1]);
+    if (right in this.cavern) {
+      return false;
+    } else {
+      this.cavern[right] = "o";
+      return true;
+    }
+  }
+
+  fallsDown(x: number) {
+    const XPAD = 3;
+    const xStr = x.toString().padStart(XPAD, "0");
+    return this.oneUp(
+      Object.keys(this.cavern)
+        .filter((c) => c.startsWith(xStr))
+        .sort()[0]
+    );
+  }
+
+  gravity(x: number) {
+    if (!this.isBottom(x)) {
+      return this.sand;
+    } else {
+      const sits = this.fallsDown(x);
+      if (!this.fallLeft(sits)) {
+        if (!this.fallRight(sits)) {
+          this.cavern[sits] = "o";
+        }
+      }
+      // gravity - fall down
+      // block down - fall left
+      // block left - fall right
+      // blocked - sand++
+      // falls continuously - end and return sand
+
+      return this.sand;
+    }
+  }
+
+  fill() {
+    const fallsFrom = 500;
+    let x = fallsFrom;
+    while (true) {
+      return this.gravity(x);
+    }
   }
 }
 const part1 = () => {};
@@ -70,9 +150,8 @@ rl.on("line", (line: string) => {
 });
 
 rl.once("close", () => {
-  console.log(lines);
   const c = new Cave(lines);
-  console.log(c.cavern);
+  console.log(c.fill());
   part1();
   part2();
 });
