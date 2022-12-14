@@ -10,7 +10,7 @@ var Cave = /** @class */ (function () {
     function Cave(rockWalls) {
         var _this = this;
         this.cavern = {};
-        this.sand = 1;
+        this.sand = 0;
         var _loop_1 = function (rockWall) {
             var from;
             rockWall.forEach(function (_a, i) {
@@ -24,11 +24,11 @@ var Cave = /** @class */ (function () {
                         var cTest = void 0;
                         var nextBy = void 0;
                         if (fy < py) {
-                            cTest = function (y) { return y < py; };
+                            cTest = function (y) { return y <= py; };
                             nextBy = 1;
                         }
                         else {
-                            cTest = function (y) { return y > py; };
+                            cTest = function (y) { return y >= py; };
                             nextBy = -1;
                         }
                         for (var y = fy; cTest(y); y += nextBy) {
@@ -40,11 +40,11 @@ var Cave = /** @class */ (function () {
                         var cTest = void 0;
                         var nextBy = void 0;
                         if (fx < px) {
-                            cTest = function (x) { return x < px; };
+                            cTest = function (x) { return x <= px; };
                             nextBy = 1;
                         }
                         else {
-                            cTest = function (x) { return x > px; };
+                            cTest = function (x) { return x >= px; };
                             nextBy = -1;
                         }
                         for (var x = fx; cTest(x); x += nextBy) {
@@ -120,7 +120,6 @@ var Cave = /** @class */ (function () {
             return this.sand;
         }
         else {
-            console.log({ id: id, sand: this.sand });
             var sits = this.fallsDown(id);
             if (!this.fallLeft(sits)) {
                 if (!this.fallRight(sits)) {
@@ -128,12 +127,18 @@ var Cave = /** @class */ (function () {
                     this.sand++;
                 }
             }
-            // gravity - fall down
-            // block down - fall left
-            // block left - fall right
-            // blocked - sand++
-            // falls continuously - end and return sand
             return this.sand;
+        }
+    };
+    Cave.prototype.showCavern = function () {
+        for (var y = 0; y < 150; y++) {
+            var row = [];
+            for (var x = 475; x < 575; x++) {
+                var id = this.coordToString([x, y]);
+                var v = this.cavern[id] || ".";
+                row.push(v);
+            }
+            console.log(row.join(""));
         }
     };
     Cave.prototype.fill = function () {
@@ -161,7 +166,14 @@ rl.on("line", function (line) {
 rl.once("close", function () {
     var c = new Cave(lines);
     console.log(c.fill());
-    // console.log(c.cavern);
+    c.showCavern();
+    /*
+    That's not the right answer; your answer is too low.
+    If you're stuck, make sure you're using the full input data;
+    there are also some general tips on the about page,
+    or you can ask for hints on the subreddit.
+    Please wait one minute before trying again. (You guessed 540.) [Return to Day 14]
+    */
     part1();
     part2();
 });

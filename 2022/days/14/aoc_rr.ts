@@ -9,7 +9,7 @@ const rl = readline.createInterface({
 
 class Cave {
   cavern: { [key: string]: string } = {};
-  sand: number = 1;
+  sand: number = 0;
   constructor(rockWalls: Coord[][]) {
     for (const rockWall of rockWalls) {
       let from: Coord;
@@ -22,10 +22,10 @@ class Cave {
             let cTest: (n: number) => boolean;
             let nextBy: number;
             if (fy < py) {
-              cTest = (y) => y < py;
+              cTest = (y) => y <= py;
               nextBy = 1;
             } else {
-              cTest = (y) => y > py;
+              cTest = (y) => y >= py;
               nextBy = -1;
             }
             for (let y = fy; cTest(y); y += nextBy) {
@@ -36,10 +36,10 @@ class Cave {
             let cTest: (n: number) => boolean;
             let nextBy: number;
             if (fx < px) {
-              cTest = (x) => x < px;
+              cTest = (x) => x <= px;
               nextBy = 1;
             } else {
-              cTest = (x) => x > px;
+              cTest = (x) => x >= px;
               nextBy = -1;
             }
             for (let x = fx; cTest(x); x += nextBy) {
@@ -117,7 +117,6 @@ class Cave {
     if (!this.isBottom(id)) {
       return this.sand;
     } else {
-      console.log({ id, sand: this.sand });
       const sits = this.fallsDown(id);
       if (!this.fallLeft(sits)) {
         if (!this.fallRight(sits)) {
@@ -125,13 +124,19 @@ class Cave {
           this.sand++;
         }
       }
-      // gravity - fall down
-      // block down - fall left
-      // block left - fall right
-      // blocked - sand++
-      // falls continuously - end and return sand
-
       return this.sand;
+    }
+  }
+
+  showCavern() {
+    for (let y = 0; y < 150; y++) {
+      let row: string[] = [];
+      for (let x = 475; x < 575; x++) {
+        const id = this.coordToString([x, y]);
+        const v = this.cavern[id] || ".";
+        row.push(v);
+      }
+      console.log(row.join(""));
     }
   }
 
@@ -160,7 +165,14 @@ rl.on("line", (line: string) => {
 rl.once("close", () => {
   const c = new Cave(lines);
   console.log(c.fill());
-  // console.log(c.cavern);
+  c.showCavern();
+  /*
+  That's not the right answer; your answer is too low.
+  If you're stuck, make sure you're using the full input data;
+  there are also some general tips on the about page,
+  or you can ask for hints on the subreddit.
+  Please wait one minute before trying again. (You guessed 540.) [Return to Day 14]
+  */
   part1();
   part2();
 });
