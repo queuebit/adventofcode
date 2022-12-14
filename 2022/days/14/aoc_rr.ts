@@ -187,6 +187,7 @@ const part2 = () => {
   there are also some general tips on the about page, 
   or you can ask for hints on the subreddit. 
   Please wait one minute before trying again. (You guessed 7438.) [Return to Day 14]
+  node aoc_rr.js < puzzle1.in  1047.44s user 4.05s system 99% cpu 17:32.51 total
   */
 };
 
