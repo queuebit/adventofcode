@@ -9,7 +9,7 @@ const rl = readline.createInterface({
 
 class Cave {
   cavern: { [key: string]: string } = {};
-  sand: number = 0;
+  sand: number = 1;
   constructor(rockWalls: Coord[][]) {
     for (const rockWall of rockWalls) {
       let from: Coord;
@@ -70,11 +70,13 @@ class Cave {
     return this.coordToString([x, y - 1]);
   }
 
-  isBottom(x: number) {
-    const XPAD = 3;
-    const xStr = x.toString().padStart(XPAD, "0");
+  isBottom(id: string) {
+    const [x, y] = this.stringToCoord(id);
     return (
-      Object.keys(this.cavern).filter((c) => c.startsWith(xStr)).length > 0
+      Object.keys(this.cavern).filter((c) => {
+        const [cx, cy] = this.stringToCoord(c);
+        return x === cx && y < cy;
+      }).length > 0
     );
   }
 
@@ -84,7 +86,7 @@ class Cave {
     if (left in this.cavern) {
       return false;
     } else {
-      this.cavern[left] = "o";
+      this.gravity(left);
       return true;
     }
   }
@@ -94,29 +96,33 @@ class Cave {
     if (right in this.cavern) {
       return false;
     } else {
-      this.cavern[right] = "o";
+      this.gravity(right);
       return true;
     }
   }
 
-  fallsDown(x: number) {
-    const XPAD = 3;
-    const xStr = x.toString().padStart(XPAD, "0");
+  fallsDown(id: string) {
+    const [x, y] = this.stringToCoord(id);
     return this.oneUp(
       Object.keys(this.cavern)
-        .filter((c) => c.startsWith(xStr))
+        .filter((c) => {
+          const [cx, cy] = this.stringToCoord(c);
+          return x === cx && y < cy;
+        })
         .sort()[0]
     );
   }
 
-  gravity(x: number) {
-    if (!this.isBottom(x)) {
+  gravity(id: string) {
+    if (!this.isBottom(id)) {
       return this.sand;
     } else {
-      const sits = this.fallsDown(x);
+      console.log({ id, sand: this.sand });
+      const sits = this.fallsDown(id);
       if (!this.fallLeft(sits)) {
         if (!this.fallRight(sits)) {
           this.cavern[sits] = "o";
+          this.sand++;
         }
       }
       // gravity - fall down
@@ -131,9 +137,11 @@ class Cave {
 
   fill() {
     const fallsFrom = 500;
-    let x = fallsFrom;
+    let sandIn = this.sand;
     while (true) {
-      return this.gravity(x);
+      const sandOut = this.gravity(this.coordToString([fallsFrom, 0]));
+      if (sandOut === sandIn) return this.sand;
+      else sandIn = sandOut;
     }
   }
 }
@@ -152,6 +160,7 @@ rl.on("line", (line: string) => {
 rl.once("close", () => {
   const c = new Cave(lines);
   console.log(c.fill());
+  // console.log(c.cavern);
   part1();
   part2();
 });
