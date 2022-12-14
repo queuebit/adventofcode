@@ -181,6 +181,13 @@ const part2 = () => {
   ]);
   console.log(c.fill());
   c.showCavern();
+  /* 
+  That's not the right answer; your answer is too low.
+  If you're stuck, make sure you're using the full input data;
+  there are also some general tips on the about page, 
+  or you can ask for hints on the subreddit. 
+  Please wait one minute before trying again. (You guessed 7438.) [Return to Day 14]
+  */
 };
 
 type Coord = [x: number, y: number];
