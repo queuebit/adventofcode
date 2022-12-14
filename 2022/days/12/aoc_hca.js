@@ -6,20 +6,6 @@ var rl = readline.createInterface({
     output: process.stdout,
     terminal: false
 });
-// let node = "32-148"; // e
-// let node = "35-140"; // e
-// let node = "34-140"; // l
-// let node = "32-132"; // f
-// let DEBUG = "31-132"; // g
-// let DEBUG = "27-124"; // g
-// let DEBUG = "25-124"; // h
-// let DEBUG = "18-126"; // h
-// let DEBUG = "17-126"; // i
-// let DEBUG = "9-128"; // i
-// let DEBUG = "9-129"; // j - ENDS, with no k
-// let DEBUG = "28-147"; // j - alt is 1000000
-// let DEBUG = "29-147"; // k - alt is 1000000
-var DEBUG = "3-5"; // i
 var HeightMap = /** @class */ (function () {
     function HeightMap() {
         this.map = [];
@@ -41,9 +27,11 @@ var HeightMap = /** @class */ (function () {
             console.log(this.map[r].join("|"));
         }
     };
-    HeightMap.prototype.dijkstra = function (source) {
+    HeightMap.prototype.dijkstra = function (source, end, stopChar) {
         var _this = this;
         if (source === void 0) { source = this.start; }
+        if (end === void 0) { end = this.end; }
+        if (stopChar === void 0) { stopChar = ""; }
         var q = [];
         var dist = {};
         var prev = {};
@@ -65,11 +53,13 @@ var HeightMap = /** @class */ (function () {
             });
             var uk = sq[0];
             q = sq.splice(1);
-            console.log(uk, this_1.end);
-            if (uk === this_1.end) {
+            var _a = uk.split("-").map(Number), ukx = _a[0], uky = _a[1];
+            if (!stopChar && uk === this_1.end) {
                 return { value: [dist, prev] };
             }
-            var _a = uk.split("-").map(Number), ukx = _a[0], uky = _a[1];
+            else if (stopChar && this_1.map[ukx][uky] === stopChar) {
+                return { value: [{ uk: dist[uk] }, {}] };
+            }
             var neighbors = [];
             if (ukx === 0) {
                 neighbors.push("".concat(ukx + 1, "-").concat(uky));
@@ -94,38 +84,30 @@ var HeightMap = /** @class */ (function () {
             neighbors.forEach(function (v) {
                 var alt;
                 var _a = v.split("-").map(Number), nx = _a[0], ny = _a[1];
-                var uChar = _this.map[ukx][uky] === "S" ? "a" : _this.map[ukx][uky];
-                var uHeight = uChar.charCodeAt(0);
-                var nChar = _this.map[nx][ny] === "E" ? "z" : _this.map[nx][ny];
-                var nHeight = nChar.charCodeAt(0);
-                var diff0 = uHeight - nHeight === 0;
-                var diff1 = uHeight - nHeight === -1;
-                var diffDown = uHeight - nHeight > 0;
-                // const diffSa = ["a", "b"].includes(nChar) && uk === this.start;
-                // const diffzE = ["z", "y"].includes(uChar) && v === this.end;
-                var nearNeighbor = diff0 || diff1 || diffDown;
-                if (uk === DEBUG) {
-                    console.log("DEBUG");
-                    console.log({
-                        q: q,
-                        uk: uk,
-                        v: v,
-                        uChar: uChar,
-                        nChar: nChar,
-                        diff0: diff0,
-                        diff1: diff1,
-                        diffDown: diffDown,
-                        nearNeighbor: nearNeighbor,
-                        inList: q.includes(v)
-                    });
+                var nearNeighbor;
+                if (stopChar) {
+                    var uChar = _this.map[ukx][uky] === "E" ? "z" : _this.map[ukx][uky];
+                    var uHeight = uChar.charCodeAt(0);
+                    var nChar = _this.map[nx][ny] === "S" ? "a" : _this.map[nx][ny];
+                    var nHeight = nChar.charCodeAt(0);
+                    var diff0 = uHeight - nHeight === 0;
+                    var diff1 = nHeight - uHeight === -1;
+                    var diffDown = nHeight - uHeight > 0;
+                    nearNeighbor = diff0 || diff1 || diffDown;
                 }
-                // uk to n is same character
-                // uk to n is single character
-                // uk is S and n is a
-                // uk is z and n is z
+                else {
+                    var uChar = _this.map[ukx][uky] === "S" ? "a" : _this.map[ukx][uky];
+                    var uHeight = uChar.charCodeAt(0);
+                    var nChar = _this.map[nx][ny] === "E" ? "z" : _this.map[nx][ny];
+                    var nHeight = nChar.charCodeAt(0);
+                    var diff0 = uHeight - nHeight === 0;
+                    var diff1 = uHeight - nHeight === -1;
+                    var diffDown = uHeight - nHeight > 0;
+                    nearNeighbor = diff0 || diff1 || diffDown;
+                }
                 if (q.includes(v) && nearNeighbor) {
                     alt = dist[uk] + 1;
-                    console.log({ alt: alt, du: dist[uk], v: v, dv: dist[v] });
+                    // console.log({ alt, du: dist[uk], v, dv: dist[v] });
                     if (alt < dist[v]) {
                         dist[v] = alt;
                         prev[v] = uk;
@@ -144,35 +126,28 @@ var HeightMap = /** @class */ (function () {
     return HeightMap;
 }());
 var part1 = function () {
-    hm.showMap();
-    var _a = hm.dijkstra(), dist = _a[0], prev = _a[1];
-    var node = hm.end;
-    console.log();
-    console.log("==== PATH FINDING ====");
-    console.log(node);
-    while (prev[node]) {
-        node = prev[node].toString();
-        console.log(node);
-    }
-    console.log();
+    // hm.showMap();
+    var _a = hm.dijkstra(), dist = _a[0], _ = _a[1];
+    // let node = hm.end;
+    // console.log();
+    // console.log(`==== PATH FINDING ====`);
+    // console.log(node);
+    // while (prev[node]) {
+    //   node = prev[node].toString();
+    //   console.log(node);
+    // }
+    // console.log();
     console.log(dist[hm.end]);
-    /*
-    That's not the right answer; your answer is too low.
-    If you're stuck, make sure you're using the full input data;
-    there are also some general tips on the about page,
-    or you can ask for hints on the subreddit.
-    Please wait one minute before trying again. (You guessed 257.) [Return to Day 12]
-    */
-    /*
-    That's not the right answer; your answer is too low.
-    If you're stuck, make sure you're using the full input data;
-    there are also some general tips on the about page,
-    or you can ask for hints on the subreddit.
-    Please wait one minute before trying again. (You guessed 445.) [Return to Day 12]
-    */
     // https://mastodon.social/@joshburnett@fosstodon.org/109506776118491499
 };
-var part2 = function () { };
+var part2 = function () {
+    var start = hm.start;
+    var end = hm.end;
+    hm.start = end;
+    hm.end = start;
+    var _a = hm.dijkstra(end, start, "a"), dist = _a[0], _ = _a[1];
+    console.log(Object.values(dist)[0]);
+};
 var hm = new HeightMap();
 rl.on("line", function (line) {
     hm.addRow(Array.from(line));

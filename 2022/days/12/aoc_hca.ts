@@ -7,21 +7,6 @@ const rl = readline.createInterface({
   terminal: false,
 });
 
-// let node = "32-148"; // e
-// let node = "35-140"; // e
-// let node = "34-140"; // l
-// let node = "32-132"; // f
-// let DEBUG = "31-132"; // g
-// let DEBUG = "27-124"; // g
-// let DEBUG = "25-124"; // h
-// let DEBUG = "18-126"; // h
-// let DEBUG = "17-126"; // i
-// let DEBUG = "9-128"; // i
-// let DEBUG = "9-129"; // j - ENDS, with no k
-// let DEBUG = "28-147"; // j - alt is 1000000
-// let DEBUG = "29-147"; // k - alt is 1000000
-let DEBUG = "3-5"; // i
-
 class HeightMap {
   map: string[][];
   start: string;
@@ -50,7 +35,11 @@ class HeightMap {
     }
   }
 
-  dijkstra(source: string = this.start) {
+  dijkstra(
+    source: string = this.start,
+    end: string = this.end,
+    stopChar: string = ""
+  ) {
     let q: string[] = [];
     let dist: { [key: string]: number } = {};
     let prev: { [key: string]: string } = {};
@@ -74,12 +63,13 @@ class HeightMap {
       });
       const uk = sq[0];
       q = sq.splice(1);
-      console.log(uk, this.end);
-      if (uk === this.end) {
+      const [ukx, uky] = uk.split("-").map(Number);
+      if (!stopChar && uk === this.end) {
         return [dist, prev];
+      } else if (stopChar && this.map[ukx][uky] === stopChar) {
+        return [{ uk: dist[uk] }, {}];
       }
 
-      const [ukx, uky] = uk.split("-").map(Number);
       let neighbors: string[] = [];
       if (ukx === 0) {
         neighbors.push(`${ukx + 1}-${uky}`);
@@ -101,38 +91,30 @@ class HeightMap {
       neighbors.forEach((v) => {
         let alt: number;
         const [nx, ny] = v.split("-").map(Number);
-        const uChar = this.map[ukx][uky] === "S" ? "a" : this.map[ukx][uky];
-        const uHeight = uChar.charCodeAt(0);
-        const nChar = this.map[nx][ny] === "E" ? "z" : this.map[nx][ny];
-        const nHeight = nChar.charCodeAt(0);
-        const diff0 = uHeight - nHeight === 0;
-        const diff1 = uHeight - nHeight === -1;
-        const diffDown = uHeight - nHeight > 0;
-        // const diffSa = ["a", "b"].includes(nChar) && uk === this.start;
-        // const diffzE = ["z", "y"].includes(uChar) && v === this.end;
-        let nearNeighbor = diff0 || diff1 || diffDown;
-        if (uk === DEBUG) {
-          console.log("DEBUG");
-          console.log({
-            q,
-            uk,
-            v,
-            uChar,
-            nChar,
-            diff0,
-            diff1,
-            diffDown,
-            nearNeighbor,
-            inList: q.includes(v),
-          });
+        let nearNeighbor: boolean;
+        if (stopChar) {
+          const uChar = this.map[ukx][uky] === "E" ? "z" : this.map[ukx][uky];
+          const uHeight = uChar.charCodeAt(0);
+          const nChar = this.map[nx][ny] === "S" ? "a" : this.map[nx][ny];
+          const nHeight = nChar.charCodeAt(0);
+          const diff0 = uHeight - nHeight === 0;
+          const diff1 = nHeight - uHeight === -1;
+          const diffDown = nHeight - uHeight > 0;
+          nearNeighbor = diff0 || diff1 || diffDown;
+        } else {
+          const uChar = this.map[ukx][uky] === "S" ? "a" : this.map[ukx][uky];
+          const uHeight = uChar.charCodeAt(0);
+          const nChar = this.map[nx][ny] === "E" ? "z" : this.map[nx][ny];
+          const nHeight = nChar.charCodeAt(0);
+          const diff0 = uHeight - nHeight === 0;
+          const diff1 = uHeight - nHeight === -1;
+          const diffDown = uHeight - nHeight > 0;
+          nearNeighbor = diff0 || diff1 || diffDown;
         }
-        // uk to n is same character
-        // uk to n is single character
-        // uk is S and n is a
-        // uk is z and n is z
+
         if (q.includes(v) && nearNeighbor) {
           alt = dist[uk] + 1;
-          console.log({ alt, du: dist[uk], v, dv: dist[v] });
+          // console.log({ alt, du: dist[uk], v, dv: dist[v] });
           if (alt < dist[v]) {
             dist[v] = alt;
             prev[v] = uk;
@@ -146,37 +128,30 @@ class HeightMap {
 }
 
 const part1 = () => {
-  hm.showMap();
-  const [dist, prev] = hm.dijkstra();
+  // hm.showMap();
+  const [dist, _] = hm.dijkstra();
 
-  let node = hm.end;
-  console.log();
-  console.log(`==== PATH FINDING ====`);
-  console.log(node);
-  while (prev[node]) {
-    node = prev[node].toString();
-    console.log(node);
-  }
-  console.log();
+  // let node = hm.end;
+  // console.log();
+  // console.log(`==== PATH FINDING ====`);
+  // console.log(node);
+  // while (prev[node]) {
+  //   node = prev[node].toString();
+  //   console.log(node);
+  // }
+  // console.log();
 
   console.log(dist[hm.end]);
-  /* 
-  That's not the right answer; your answer is too low.
-  If you're stuck, make sure you're using the full input data;
-  there are also some general tips on the about page,
-  or you can ask for hints on the subreddit.
-  Please wait one minute before trying again. (You guessed 257.) [Return to Day 12]
-  */
-  /*
-  That's not the right answer; your answer is too low.
-  If you're stuck, make sure you're using the full input data;
-  there are also some general tips on the about page,
-  or you can ask for hints on the subreddit.
-  Please wait one minute before trying again. (You guessed 445.) [Return to Day 12]
-  */
   // https://mastodon.social/@joshburnett@fosstodon.org/109506776118491499
 };
-const part2 = () => {};
+const part2 = () => {
+  const start = hm.start;
+  const end = hm.end;
+  hm.start = end;
+  hm.end = start;
+  const [dist, _] = hm.dijkstra(end, start, "a");
+  console.log(Object.values(dist)[0]);
+};
 
 let hm = new HeightMap();
 rl.on("line", (line: string) => {
