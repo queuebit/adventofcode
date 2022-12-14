@@ -20,7 +20,7 @@ const rl = readline.createInterface({
 // let DEBUG = "9-129"; // j - ENDS, with no k
 // let DEBUG = "28-147"; // j - alt is 1000000
 // let DEBUG = "29-147"; // k - alt is 1000000
-let DEBUG = "19-148"; // i
+let DEBUG = "3-5"; // i
 
 class HeightMap {
   map: string[][];
@@ -73,8 +73,11 @@ class HeightMap {
         return dist[a] - dist[b];
       });
       const uk = sq[0];
-      console.log(uk);
       q = sq.splice(1);
+      console.log(uk, this.end);
+      if (uk === this.end) {
+        return [dist, prev];
+      }
 
       const [ukx, uky] = uk.split("-").map(Number);
       let neighbors: string[] = [];
@@ -98,15 +101,16 @@ class HeightMap {
       neighbors.forEach((v) => {
         let alt: number;
         const [nx, ny] = v.split("-").map(Number);
-        const uChar = this.map[ukx][uky];
+        const uChar = this.map[ukx][uky] === "S" ? "a" : this.map[ukx][uky];
         const uHeight = uChar.charCodeAt(0);
-        const nChar = this.map[nx][ny];
+        const nChar = this.map[nx][ny] === "E" ? "z" : this.map[nx][ny];
         const nHeight = nChar.charCodeAt(0);
         const diff0 = uHeight - nHeight === 0;
         const diff1 = uHeight - nHeight === -1;
-        const diffSa = uk === this.start && nChar === "a";
-        const diffzE = uChar === "z" && v === this.end;
-        let nearNeighbor = diff0 || diff1 || diffSa || diffzE;
+        const diffDown = uHeight - nHeight > 0;
+        // const diffSa = ["a", "b"].includes(nChar) && uk === this.start;
+        // const diffzE = ["z", "y"].includes(uChar) && v === this.end;
+        let nearNeighbor = diff0 || diff1 || diffDown;
         if (uk === DEBUG) {
           console.log("DEBUG");
           console.log({
@@ -117,8 +121,7 @@ class HeightMap {
             nChar,
             diff0,
             diff1,
-            diffSa,
-            diffzE,
+            diffDown,
             nearNeighbor,
             inList: q.includes(v),
           });
@@ -129,7 +132,7 @@ class HeightMap {
         // uk is z and n is z
         if (q.includes(v) && nearNeighbor) {
           alt = dist[uk] + 1;
-          console.log({ alt, uk, v });
+          console.log({ alt, du: dist[uk], v, dv: dist[v] });
           if (alt < dist[v]) {
             dist[v] = alt;
             prev[v] = uk;
@@ -146,7 +149,7 @@ const part1 = () => {
   hm.showMap();
   const [dist, prev] = hm.dijkstra();
 
-  let node = DEBUG;
+  let node = hm.end;
   console.log();
   console.log(`==== PATH FINDING ====`);
   console.log(node);
@@ -163,6 +166,13 @@ const part1 = () => {
   there are also some general tips on the about page,
   or you can ask for hints on the subreddit.
   Please wait one minute before trying again. (You guessed 257.) [Return to Day 12]
+  */
+  /*
+  That's not the right answer; your answer is too low.
+  If you're stuck, make sure you're using the full input data;
+  there are also some general tips on the about page,
+  or you can ask for hints on the subreddit.
+  Please wait one minute before trying again. (You guessed 445.) [Return to Day 12]
   */
   // https://mastodon.social/@joshburnett@fosstodon.org/109506776118491499
 };

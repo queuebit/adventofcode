@@ -19,7 +19,7 @@ var rl = readline.createInterface({
 // let DEBUG = "9-129"; // j - ENDS, with no k
 // let DEBUG = "28-147"; // j - alt is 1000000
 // let DEBUG = "29-147"; // k - alt is 1000000
-var DEBUG = "19-148"; // i
+var DEBUG = "3-5"; // i
 var HeightMap = /** @class */ (function () {
     function HeightMap() {
         this.map = [];
@@ -64,8 +64,11 @@ var HeightMap = /** @class */ (function () {
                 return dist[a] - dist[b];
             });
             var uk = sq[0];
-            console.log(uk);
             q = sq.splice(1);
+            console.log(uk, this_1.end);
+            if (uk === this_1.end) {
+                return { value: [dist, prev] };
+            }
             var _a = uk.split("-").map(Number), ukx = _a[0], uky = _a[1];
             var neighbors = [];
             if (ukx === 0) {
@@ -91,15 +94,16 @@ var HeightMap = /** @class */ (function () {
             neighbors.forEach(function (v) {
                 var alt;
                 var _a = v.split("-").map(Number), nx = _a[0], ny = _a[1];
-                var uChar = _this.map[ukx][uky];
+                var uChar = _this.map[ukx][uky] === "S" ? "a" : _this.map[ukx][uky];
                 var uHeight = uChar.charCodeAt(0);
-                var nChar = _this.map[nx][ny];
+                var nChar = _this.map[nx][ny] === "E" ? "z" : _this.map[nx][ny];
                 var nHeight = nChar.charCodeAt(0);
                 var diff0 = uHeight - nHeight === 0;
                 var diff1 = uHeight - nHeight === -1;
-                var diffSa = uk === _this.start && nChar === "a";
-                var diffzE = uChar === "z" && v === _this.end;
-                var nearNeighbor = diff0 || diff1 || diffSa || diffzE;
+                var diffDown = uHeight - nHeight > 0;
+                // const diffSa = ["a", "b"].includes(nChar) && uk === this.start;
+                // const diffzE = ["z", "y"].includes(uChar) && v === this.end;
+                var nearNeighbor = diff0 || diff1 || diffDown;
                 if (uk === DEBUG) {
                     console.log("DEBUG");
                     console.log({
@@ -110,8 +114,7 @@ var HeightMap = /** @class */ (function () {
                         nChar: nChar,
                         diff0: diff0,
                         diff1: diff1,
-                        diffSa: diffSa,
-                        diffzE: diffzE,
+                        diffDown: diffDown,
                         nearNeighbor: nearNeighbor,
                         inList: q.includes(v)
                     });
@@ -122,7 +125,7 @@ var HeightMap = /** @class */ (function () {
                 // uk is z and n is z
                 if (q.includes(v) && nearNeighbor) {
                     alt = dist[uk] + 1;
-                    console.log({ alt: alt, uk: uk, v: v });
+                    console.log({ alt: alt, du: dist[uk], v: v, dv: dist[v] });
                     if (alt < dist[v]) {
                         dist[v] = alt;
                         prev[v] = uk;
@@ -130,8 +133,11 @@ var HeightMap = /** @class */ (function () {
                 }
             });
         };
+        var this_1 = this;
         while (q.length > 0) {
-            _loop_1();
+            var state_1 = _loop_1();
+            if (typeof state_1 === "object")
+                return state_1.value;
         }
         return [dist, prev];
     };
@@ -140,7 +146,7 @@ var HeightMap = /** @class */ (function () {
 var part1 = function () {
     hm.showMap();
     var _a = hm.dijkstra(), dist = _a[0], prev = _a[1];
-    var node = DEBUG;
+    var node = hm.end;
     console.log();
     console.log("==== PATH FINDING ====");
     console.log(node);
@@ -156,6 +162,13 @@ var part1 = function () {
     there are also some general tips on the about page,
     or you can ask for hints on the subreddit.
     Please wait one minute before trying again. (You guessed 257.) [Return to Day 12]
+    */
+    /*
+    That's not the right answer; your answer is too low.
+    If you're stuck, make sure you're using the full input data;
+    there are also some general tips on the about page,
+    or you can ask for hints on the subreddit.
+    Please wait one minute before trying again. (You guessed 445.) [Return to Day 12]
     */
     // https://mastodon.social/@joshburnett@fosstodon.org/109506776118491499
 };
