@@ -126,7 +126,6 @@ class Cave {
   }
 
   gravity(id: string) {
-    console.log(id);
     if (this.sand > 2000) {
       return this.sand;
     }
@@ -135,14 +134,9 @@ class Cave {
     } else if (this.caveMap.has(id)) {
       return this.sand;
     } else {
-      const t = Date.now();
       const sits = this.fallsDown(id);
-      console.log(`tmtm - falldown - ${Date.now() - t}`);
-      const t2 = Date.now();
       const fl = this.fallLeft(sits);
-      console.log(`tmtm - fallleft - ${Date.now() - t2}`);
       if (!fl) {
-        const t3 = Date.now();
         const fr = this.fallRight(sits);
         console.log(`tmtm - fallright - ${Date.now() - t3}`);
         if (!fr) {
