@@ -9,6 +9,7 @@ const rl = readline.createInterface({
 
 class Cave {
   cavern: { [key: string]: string } = {};
+  caveMap: Set<string> = new Set<string>();
   sand: number = 0;
 
   constructor(rockWalls: Coord[][]) {
@@ -37,6 +38,7 @@ class Cave {
           for (let y = fy; cTest(y); y += nextBy) {
             const n = this.coordToString([px, y]);
             this.cavern[n] = "#";
+            this.caveMap.add(n);
           }
         } else if (fy === py) {
           let cTest: (n: number) => boolean;
@@ -51,6 +53,7 @@ class Cave {
           for (let x = fx; cTest(x); x += nextBy) {
             const n = this.coordToString([x, py]);
             this.cavern[n] = "#";
+            this.caveMap.add(n);
           }
         }
       }
@@ -76,9 +79,10 @@ class Cave {
   }
 
   isBottom(id: string) {
+    console.log("tktk - isBottom");
     const [x, y] = this.stringToCoord(id);
     return (
-      Object.keys(this.cavern).filter((c) => {
+      Array.from(this.caveMap).filter((c) => {
         const [cx, cy] = this.stringToCoord(c);
         return x === cx && y < cy;
       }).length > 0
@@ -86,9 +90,10 @@ class Cave {
   }
 
   fallLeft(id: string) {
+    console.log("tktk - fallsLeft");
     const [x, y] = this.stringToCoord(id);
     const left = this.coordToString([x - 1, y + 1]);
-    if (left in this.cavern) {
+    if (this.caveMap.has(left)) {
       return false;
     } else {
       this.gravity(left);
@@ -96,9 +101,10 @@ class Cave {
     }
   }
   fallRight(id: string) {
+    console.log("tktk - fallsRight");
     const [x, y] = this.stringToCoord(id);
     const right = this.coordToString([x + 1, y + 1]);
-    if (right in this.cavern) {
+    if (this.caveMap.has(right)) {
       return false;
     } else {
       this.gravity(right);
@@ -107,9 +113,10 @@ class Cave {
   }
 
   fallsDown(id: string) {
+    console.log("tktk - fallsDown");
     const [x, y] = this.stringToCoord(id);
     return this.oneUp(
-      Object.keys(this.cavern)
+      Array.from(this.caveMap)
         .filter((c) => {
           const [cx, cy] = this.stringToCoord(c);
           return x === cx && y < cy;
@@ -119,15 +126,28 @@ class Cave {
   }
 
   gravity(id: string) {
+    console.log(id);
+    if (this.sand > 2000) {
+      return this.sand;
+    }
     if (!this.isBottom(id)) {
       return this.sand;
-    } else if (this.cavern[id]) {
+    } else if (this.caveMap.has(id)) {
       return this.sand;
     } else {
+      const t = Date.now();
       const sits = this.fallsDown(id);
-      if (!this.fallLeft(sits)) {
-        if (!this.fallRight(sits)) {
+      console.log(`tmtm - falldown - ${Date.now() - t}`);
+      const t2 = Date.now();
+      const fl = this.fallLeft(sits);
+      console.log(`tmtm - fallleft - ${Date.now() - t2}`);
+      if (!fl) {
+        const t3 = Date.now();
+        const fr = this.fallRight(sits);
+        console.log(`tmtm - fallright - ${Date.now() - t3}`);
+        if (!fr) {
           this.cavern[sits] = "o";
+          this.caveMap.add(sits);
           this.sand++;
         }
       }
@@ -146,7 +166,7 @@ class Cave {
   }
 
   showCavern() {
-    for (let y = 0; y < 150; y++) {
+    for (let y = 0; y < 200; y++) {
       let row: string[] = [];
       for (let x = 475; x < 575; x++) {
         const id = this.coordToString([x, y]);
@@ -170,14 +190,14 @@ class Cave {
 const part1 = () => {
   const c = new Cave(lines);
   console.log(c.fill());
-  // c.showCavern();
+  c.showCavern();
 };
 const part2 = () => {
   const c = new Cave(lines);
   const maxDepth = c.maxRockDepth();
   c.addRockWall([
-    [450, maxDepth + 2],
-    [650, maxDepth + 2],
+    [300, maxDepth + 2],
+    [800, maxDepth + 2],
   ]);
   console.log(c.fill());
   c.showCavern();
@@ -188,6 +208,7 @@ const part2 = () => {
   or you can ask for hints on the subreddit. 
   Please wait one minute before trying again. (You guessed 7438.) [Return to Day 14]
   node aoc_rr.js < puzzle1.in  1047.44s user 4.05s system 99% cpu 17:32.51 total
+  https://github.com/LuisMayo/advent-of-code-2022/blob/master/src/day14/src/part1.ts
   */
 };
 
