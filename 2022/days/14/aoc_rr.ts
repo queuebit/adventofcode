@@ -11,6 +11,7 @@ class Cave {
   cavern: { [key: string]: string } = {};
   caveMap: Set<string> = new Set<string>();
   sand: number = 0;
+  maxY: number = 0;
 
   constructor(rockWalls: Coord[][]) {
     for (const rockWall of rockWalls) {
@@ -38,7 +39,7 @@ class Cave {
           for (let y = fy; cTest(y); y += nextBy) {
             const n = this.coordToString([px, y]);
             this.cavern[n] = "#";
-            this.caveMap.add(n);
+            this.caveMap.add(`${px}-${y}`);
           }
         } else if (fy === py) {
           let cTest: (n: number) => boolean;
@@ -53,12 +54,13 @@ class Cave {
           for (let x = fx; cTest(x); x += nextBy) {
             const n = this.coordToString([x, py]);
             this.cavern[n] = "#";
-            this.caveMap.add(n);
+            this.caveMap.add(`${x}-${py}`);
           }
         }
       }
       from = [px, py];
     });
+    this.maxY = this.findMaxRockDepth();
   }
 
   coordToString(c: Coord) {
@@ -79,7 +81,6 @@ class Cave {
   }
 
   isBottom(id: string) {
-    console.log("tktk - isBottom");
     const [x, y] = this.stringToCoord(id);
     return (
       Array.from(this.caveMap).filter((c) => {
@@ -90,7 +91,6 @@ class Cave {
   }
 
   fallLeft(id: string) {
-    console.log("tktk - fallsLeft");
     const [x, y] = this.stringToCoord(id);
     const left = this.coordToString([x - 1, y + 1]);
     if (this.caveMap.has(left)) {
@@ -101,7 +101,6 @@ class Cave {
     }
   }
   fallRight(id: string) {
-    console.log("tktk - fallsRight");
     const [x, y] = this.stringToCoord(id);
     const right = this.coordToString([x + 1, y + 1]);
     if (this.caveMap.has(right)) {
@@ -113,7 +112,6 @@ class Cave {
   }
 
   fallsDown(id: string) {
-    console.log("tktk - fallsDown");
     const [x, y] = this.stringToCoord(id);
     return this.oneUp(
       Array.from(this.caveMap)
@@ -135,11 +133,8 @@ class Cave {
       return this.sand;
     } else {
       const sits = this.fallsDown(id);
-      const fl = this.fallLeft(sits);
-      if (!fl) {
-        const fr = this.fallRight(sits);
-        console.log(`tmtm - fallright - ${Date.now() - t3}`);
-        if (!fr) {
+      if (!this.fallLeft(sits)) {
+        if (!this.fallRight(sits)) {
           this.cavern[sits] = "o";
           this.caveMap.add(sits);
           this.sand++;
@@ -149,7 +144,7 @@ class Cave {
     }
   }
 
-  maxRockDepth() {
+  findMaxRockDepth() {
     return Math.max(
       ...Object.keys(this.cavern)
         .filter((c) => {
@@ -180,21 +175,78 @@ class Cave {
       else sandIn = sandOut;
     }
   }
+  fill2() {
+    const fallsFrom = 500;
+    let endlessVoid = false;
+
+    while (!endlessVoid) {
+      let [px, py] = [fallsFrom, 0];
+
+      while (true) {
+        if (!this.caveMap.has(`${px}-${py + 1}`)) {
+          py++;
+        } else if (!this.caveMap.has(`${px - 1}-${py + 1}`)) {
+          px--;
+          py++;
+        } else if (!this.caveMap.has(`${px + 1}-${py + 1}`)) {
+          px++;
+          py++;
+        } else {
+          this.caveMap.add(`${px}-${py}`);
+          this.sand++;
+          break;
+        }
+        if (py >= this.maxY) {
+          endlessVoid = true;
+          break;
+        }
+      }
+    }
+    return this.sand;
+  }
+  fill3() {
+    while (true) {
+      if (this.caveMap.has(`500-0`)) {
+        break;
+      }
+      let [px, py] = [500, 0];
+
+      while (true) {
+        if (py === this.maxY - 1) {
+          this.caveMap.add(`${px}-${py}`);
+          this.sand++;
+          break;
+        } else if (!this.caveMap.has(`${px}-${py + 1}`)) {
+          py++;
+        } else if (!this.caveMap.has(`${px - 1}-${py + 1}`)) {
+          px--;
+          py++;
+        } else if (!this.caveMap.has(`${px + 1}-${py + 1}`)) {
+          px++;
+          py++;
+        } else {
+          this.caveMap.add(`${px}-${py}`);
+          this.sand++;
+          break;
+        }
+      }
+    }
+    return this.sand;
+  }
 }
 const part1 = () => {
   const c = new Cave(lines);
-  console.log(c.fill());
-  c.showCavern();
+  console.log(c.fill2());
+  // c.showCavern();
 };
 const part2 = () => {
   const c = new Cave(lines);
-  const maxDepth = c.maxRockDepth();
   c.addRockWall([
-    [300, maxDepth + 2],
-    [800, maxDepth + 2],
+    [300, c.maxY + 2],
+    [800, c.maxY + 2],
   ]);
-  console.log(c.fill());
-  c.showCavern();
+  console.log(c.fill3());
+  // c.showCavern();
   /* 
   That's not the right answer; your answer is too low.
   If you're stuck, make sure you're using the full input data;

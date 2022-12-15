@@ -11,6 +11,7 @@ var Cave = /** @class */ (function () {
         this.cavern = {};
         this.caveMap = new Set();
         this.sand = 0;
+        this.maxY = 0;
         for (var _i = 0, rockWalls_1 = rockWalls; _i < rockWalls_1.length; _i++) {
             var rockWall = rockWalls_1[_i];
             this.addRockWall(rockWall);
@@ -40,7 +41,7 @@ var Cave = /** @class */ (function () {
                     for (var y = fy; cTest(y); y += nextBy) {
                         var n = _this.coordToString([px, y]);
                         _this.cavern[n] = "#";
-                        _this.caveMap.add(n);
+                        _this.caveMap.add("".concat(px, "-").concat(y));
                     }
                 }
                 else if (fy === py) {
@@ -57,12 +58,13 @@ var Cave = /** @class */ (function () {
                     for (var x = fx; cTest(x); x += nextBy) {
                         var n = _this.coordToString([x, py]);
                         _this.cavern[n] = "#";
-                        _this.caveMap.add(n);
+                        _this.caveMap.add("".concat(x, "-").concat(py));
                     }
                 }
             }
             from = [px, py];
         });
+        this.maxY = this.findMaxRockDepth();
     };
     Cave.prototype.coordToString = function (c) {
         var PAD = 9;
@@ -80,7 +82,6 @@ var Cave = /** @class */ (function () {
     };
     Cave.prototype.isBottom = function (id) {
         var _this = this;
-        console.log("tktk - isBottom");
         var _a = this.stringToCoord(id), x = _a[0], y = _a[1];
         return (Array.from(this.caveMap).filter(function (c) {
             var _a = _this.stringToCoord(c), cx = _a[0], cy = _a[1];
@@ -88,7 +89,6 @@ var Cave = /** @class */ (function () {
         }).length > 0);
     };
     Cave.prototype.fallLeft = function (id) {
-        console.log("tktk - fallsLeft");
         var _a = this.stringToCoord(id), x = _a[0], y = _a[1];
         var left = this.coordToString([x - 1, y + 1]);
         if (this.caveMap.has(left)) {
@@ -100,7 +100,6 @@ var Cave = /** @class */ (function () {
         }
     };
     Cave.prototype.fallRight = function (id) {
-        console.log("tktk - fallsRight");
         var _a = this.stringToCoord(id), x = _a[0], y = _a[1];
         var right = this.coordToString([x + 1, y + 1]);
         if (this.caveMap.has(right)) {
@@ -113,7 +112,6 @@ var Cave = /** @class */ (function () {
     };
     Cave.prototype.fallsDown = function (id) {
         var _this = this;
-        console.log("tktk - fallsDown");
         var _a = this.stringToCoord(id), x = _a[0], y = _a[1];
         return this.oneUp(Array.from(this.caveMap)
             .filter(function (c) {
@@ -123,7 +121,6 @@ var Cave = /** @class */ (function () {
             .sort()[0]);
     };
     Cave.prototype.gravity = function (id) {
-        console.log(id);
         if (this.sand > 2000) {
             return this.sand;
         }
@@ -134,17 +131,9 @@ var Cave = /** @class */ (function () {
             return this.sand;
         }
         else {
-            var t = Date.now();
             var sits = this.fallsDown(id);
-            console.log("tmtm - falldown - ".concat(Date.now() - t));
-            var t2 = Date.now();
-            var fl = this.fallLeft(sits);
-            console.log("tmtm - fallleft - ".concat(Date.now() - t2));
-            if (!fl) {
-                var t3 = Date.now();
-                var fr = this.fallRight(sits);
-                console.log("tmtm - fallright - ".concat(Date.now() - t3));
-                if (!fr) {
+            if (!this.fallLeft(sits)) {
+                if (!this.fallRight(sits)) {
                     this.cavern[sits] = "o";
                     this.caveMap.add(sits);
                     this.sand++;
@@ -153,7 +142,7 @@ var Cave = /** @class */ (function () {
             return this.sand;
         }
     };
-    Cave.prototype.maxRockDepth = function () {
+    Cave.prototype.findMaxRockDepth = function () {
         var _this = this;
         return Math.max.apply(Math, Object.keys(this.cavern)
             .filter(function (c) {
@@ -183,22 +172,83 @@ var Cave = /** @class */ (function () {
                 sandIn = sandOut;
         }
     };
+    Cave.prototype.fill2 = function () {
+        var fallsFrom = 500;
+        var endlessVoid = false;
+        while (!endlessVoid) {
+            var _a = [fallsFrom, 0], px = _a[0], py = _a[1];
+            while (true) {
+                if (!this.caveMap.has("".concat(px, "-").concat(py + 1))) {
+                    py++;
+                }
+                else if (!this.caveMap.has("".concat(px - 1, "-").concat(py + 1))) {
+                    px--;
+                    py++;
+                }
+                else if (!this.caveMap.has("".concat(px + 1, "-").concat(py + 1))) {
+                    px++;
+                    py++;
+                }
+                else {
+                    this.caveMap.add("".concat(px, "-").concat(py));
+                    this.sand++;
+                    break;
+                }
+                if (py >= this.maxY) {
+                    endlessVoid = true;
+                    break;
+                }
+            }
+        }
+        return this.sand;
+    };
+    Cave.prototype.fill3 = function () {
+        while (true) {
+            if (this.caveMap.has("500-0")) {
+                break;
+            }
+            var _a = [500, 0], px = _a[0], py = _a[1];
+            while (true) {
+                if (py === this.maxY - 1) {
+                    this.caveMap.add("".concat(px, "-").concat(py));
+                    this.sand++;
+                    break;
+                }
+                else if (!this.caveMap.has("".concat(px, "-").concat(py + 1))) {
+                    py++;
+                }
+                else if (!this.caveMap.has("".concat(px - 1, "-").concat(py + 1))) {
+                    px--;
+                    py++;
+                }
+                else if (!this.caveMap.has("".concat(px + 1, "-").concat(py + 1))) {
+                    px++;
+                    py++;
+                }
+                else {
+                    this.caveMap.add("".concat(px, "-").concat(py));
+                    this.sand++;
+                    break;
+                }
+            }
+        }
+        return this.sand;
+    };
     return Cave;
 }());
 var part1 = function () {
     var c = new Cave(lines);
-    console.log(c.fill());
-    c.showCavern();
+    console.log(c.fill2());
+    // c.showCavern();
 };
 var part2 = function () {
     var c = new Cave(lines);
-    var maxDepth = c.maxRockDepth();
     c.addRockWall([
-        [300, maxDepth + 2],
-        [800, maxDepth + 2],
+        [300, c.maxY + 2],
+        [800, c.maxY + 2],
     ]);
-    console.log(c.fill());
-    c.showCavern();
+    console.log(c.fill3());
+    // c.showCavern();
     /*
     That's not the right answer; your answer is too low.
     If you're stuck, make sure you're using the full input data;
