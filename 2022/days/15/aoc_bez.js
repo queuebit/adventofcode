@@ -38,25 +38,14 @@ var part1 = function (sensors) {
     // const possiblePossibiles = possibilities.size;
     // remove based on sensor knowledge
     var KEY_ROW = 2000000;
+    // const KEY_ROW = 10;
     var knownNots = new Set();
     for (var _a = 0, sensors_2 = sensors; _a < sensors_2.length; _a++) {
         var sensor = sensors_2[_a];
-        // location
-        if (sensor.location.y === KEY_ROW)
-            knownNots.add("".concat(sensor.location.x, ",").concat(sensor.location.y));
-        // spaces manhattan from beacon
-        for (var dx = -sensor.manhattan; dx <= sensor.manhattan; dx++) {
-            if (sensor.location.y === KEY_ROW) {
-                knownNots.add("".concat(sensor.location.x + dx, ",").concat(sensor.location.y));
-            }
-            for (var dy = 0; dy <= Math.abs(Math.abs(dx) - sensor.manhattan); dy++) {
-                if (sensor.location.y + dy === KEY_ROW) {
-                    knownNots.add("".concat(sensor.location.x + dx, ",").concat(sensor.location.y + dy));
-                }
-                if (sensor.location.y - dy === KEY_ROW) {
-                    knownNots.add("".concat(sensor.location.x + dx, ",").concat(sensor.location.y - dy));
-                }
-            }
+        for (var ax = area.minX - 1e3; ax <= area.maxX + 1e3; ax++) {
+            var possible = { x: ax, y: KEY_ROW };
+            if (sensor.manhattanNear(possible))
+                knownNots.add("".concat(possible.x, ",").concat(possible.y));
         }
         // beacon
         if (sensor.beacon.y === KEY_ROW)
@@ -64,6 +53,8 @@ var part1 = function (sensors) {
     }
     console.log(Array.from(knownNots).sort());
     console.log(knownNots.size);
+    // % time node aoc_bez.js < puzzle.in
+    // node aoc_bez.js < puzzle.in  1974.82s user 4.32s system 99% cpu 33:03.10 total
 };
 var part2 = function () { };
 var Sensor = /** @class */ (function () {
@@ -74,6 +65,11 @@ var Sensor = /** @class */ (function () {
         var dy = Math.abs(location.y - beacon.y);
         this.manhattan = dx + dy;
     }
+    Sensor.prototype.manhattanNear = function (p) {
+        var dx = Math.abs(this.location.x - p.x);
+        var dy = Math.abs(this.location.y - p.y);
+        return dx + dy <= this.manhattan;
+    };
     return Sensor;
 }());
 var sensorArray = [];

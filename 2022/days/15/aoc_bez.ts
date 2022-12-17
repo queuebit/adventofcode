@@ -41,27 +41,15 @@ const part1 = (sensors: Sensor[]) => {
 
   // remove based on sensor knowledge
   const KEY_ROW = 2000000;
+  // const KEY_ROW = 10;
   let knownNots = new Set<string>();
   for (const sensor of sensors) {
-    // location
-    if (sensor.location.y === KEY_ROW)
-      knownNots.add(`${sensor.location.x},${sensor.location.y}`);
-
-    // spaces manhattan from beacon
-    for (let dx = -sensor.manhattan; dx <= sensor.manhattan; dx++) {
-      if (sensor.location.y === KEY_ROW) {
-        knownNots.add(`${sensor.location.x + dx},${sensor.location.y}`);
-      }
-
-      for (let dy = 0; dy <= Math.abs(Math.abs(dx) - sensor.manhattan); dy++) {
-        if (sensor.location.y + dy === KEY_ROW) {
-          knownNots.add(`${sensor.location.x + dx},${sensor.location.y + dy}`);
-        }
-        if (sensor.location.y - dy === KEY_ROW) {
-          knownNots.add(`${sensor.location.x + dx},${sensor.location.y - dy}`);
-        }
-      }
+    for (let ax = area.minX - 1e3; ax <= area.maxX + 1e3; ax++) {
+      const possible = { x: ax, y: KEY_ROW };
+      if (sensor.manhattanNear(possible))
+        knownNots.add(`${possible.x},${possible.y}`);
     }
+
     // beacon
     if (sensor.beacon.y === KEY_ROW)
       knownNots.delete(`${sensor.beacon.x},${sensor.beacon.y}`);
@@ -71,6 +59,11 @@ const part1 = (sensors: Sensor[]) => {
 
   // % time node aoc_bez.js < puzzle.in
   // node aoc_bez.js < puzzle.in  1974.82s user 4.32s system 99% cpu 33:03.10 total
+  // That's not the right answer; your answer is too low.
+  // If you're stuck, make sure you're using the full input data;
+  // there are also some general tips on the about page,
+  // or you can ask for hints on the subreddit.
+  // Please wait one minute before trying again. (You guessed 3447420.) [Return to Day 15]
 };
 const part2 = () => {};
 
@@ -85,6 +78,12 @@ class Sensor {
     const dx = Math.abs(location.x - beacon.x);
     const dy = Math.abs(location.y - beacon.y);
     this.manhattan = dx + dy;
+  }
+
+  manhattanNear(p: Coord) {
+    const dx = Math.abs(this.location.x - p.x);
+    const dy = Math.abs(this.location.y - p.y);
+    return dx + dy <= this.manhattan;
   }
 }
 
