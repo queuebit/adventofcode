@@ -49,21 +49,26 @@ const part1 = (sensors: Sensor[]) => {
     // beacon
     if (sensor.beacon.y === KEY_ROW)
       knownNots.delete(`${sensor.beacon.x},${sensor.beacon.y}`);
-    // console.log({
-    //   sz: knownNots.size,
-    //   dy,
-    //   y: sensor.location.y,
-    //   man: sensor.manhattan,
-    //   yp: sensor.location.y + sensor.manhattan,
-    //   ym: sensor.location.y - sensor.manhattan,
-    //   diff: sensor.manhattan - dy,
-    //   guess: 2 * (sensor.manhattan - dy) + 1,
-    //   m1Beacon: sensor.beacon.y === KEY_ROW,
-    // });
   }
   console.log(knownNots.size);
 };
-const part2 = () => {};
+const part2 = (sensors: Sensor[]) => {
+  const area = {
+    xMin: 0,
+    xMax: 20,
+    yMin: 0,
+    yMax: 20,
+  };
+  for (let x = area.xMin; x <= area.xMax; x++) {
+    for (let y = area.yMin; y <= area.yMax; y++) {
+      const possible = { x, y };
+      if (sensors.every((s) => !s.manhattanNear(possible))) return possible;
+      // if (sensor.beacon.y === KEY_ROW)
+      //   knownNots.delete(`${sensor.beacon.x},${sensor.beacon.y}`);
+    }
+  }
+  return { x: 0, y: 0 };
+};
 
 type Coord = { x: number; y: number };
 class Sensor {
@@ -108,5 +113,7 @@ rl.on("line", (line: string) => {
 
 rl.once("close", () => {
   part1(sensorArray);
-  part2();
+  const b = part2(sensorArray);
+  console.log(b);
+  console.log(b.x * 4000000 + b.y);
 });

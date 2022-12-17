@@ -47,21 +47,30 @@ var part1 = function (sensors) {
         // beacon
         if (sensor.beacon.y === KEY_ROW)
             knownNots["delete"]("".concat(sensor.beacon.x, ",").concat(sensor.beacon.y));
-        // console.log({
-        //   sz: knownNots.size,
-        //   dy,
-        //   y: sensor.location.y,
-        //   man: sensor.manhattan,
-        //   yp: sensor.location.y + sensor.manhattan,
-        //   ym: sensor.location.y - sensor.manhattan,
-        //   diff: sensor.manhattan - dy,
-        //   guess: 2 * (sensor.manhattan - dy) + 1,
-        //   m1Beacon: sensor.beacon.y === KEY_ROW,
-        // });
     }
     console.log(knownNots.size);
 };
-var part2 = function () { };
+var part2 = function (sensors) {
+    var area = {
+        xMin: 0,
+        xMax: 20,
+        yMin: 0,
+        yMax: 20
+    };
+    for (var x = area.xMin; x <= area.xMax; x++) {
+        var _loop_1 = function (y) {
+            var possible = { x: x, y: y };
+            if (sensors.every(function (s) { return !s.manhattanNear(possible); }))
+                return { value: possible };
+        };
+        for (var y = area.yMin; y <= area.yMax; y++) {
+            var state_1 = _loop_1(y);
+            if (typeof state_1 === "object")
+                return state_1.value;
+        }
+    }
+    return { x: 0, y: 0 };
+};
 var Sensor = /** @class */ (function () {
     function Sensor(location, beacon) {
         this.location = location;
@@ -99,5 +108,7 @@ rl.on("line", function (line) {
 });
 rl.once("close", function () {
     part1(sensorArray);
-    part2();
+    var b = part2(sensorArray);
+    console.log(b);
+    console.log(b.x * 4000000 + b.y);
 });
