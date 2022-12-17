@@ -51,16 +51,26 @@ var part1 = function (sensors) {
     console.log(knownNots.size);
 };
 var part2 = function (sensors) {
+    // const area = {
+    //   xMin: 0,
+    //   xMax: 20,
+    //   yMin: 0,
+    //   yMax: 20,
+    // };
     var area = {
         xMin: 0,
-        xMax: 20,
+        xMax: 4000000,
         yMin: 0,
-        yMax: 20
+        yMax: 4000000
     };
     for (var x = area.xMin; x <= area.xMax; x++) {
         var _loop_1 = function (y) {
             var possible = { x: x, y: y };
-            if (sensors.every(function (s) { return !s.manhattanNear(possible); }))
+            if (sensors.every(function (s) {
+                return s.notNearX(possible) &&
+                    s.notNearY(possible) &&
+                    !s.manhattanNear(possible);
+            }))
                 return { value: possible };
         };
         for (var y = area.yMin; y <= area.yMax; y++) {
@@ -79,6 +89,14 @@ var Sensor = /** @class */ (function () {
         var dy = Math.abs(location.y - beacon.y);
         this.manhattan = dx + dy;
     }
+    Sensor.prototype.notNearX = function (p) {
+        var dx = Math.abs(this.location.x - p.x);
+        return dx > this.manhattan;
+    };
+    Sensor.prototype.notNearY = function (p) {
+        var dy = Math.abs(this.location.y - p.y);
+        return dy > this.manhattan;
+    };
     Sensor.prototype.manhattanNear = function (p) {
         var dx = Math.abs(this.location.x - p.x);
         var dy = Math.abs(this.location.y - p.y);

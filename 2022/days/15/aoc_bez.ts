@@ -53,16 +53,30 @@ const part1 = (sensors: Sensor[]) => {
   console.log(knownNots.size);
 };
 const part2 = (sensors: Sensor[]) => {
+  // const area = {
+  //   xMin: 0,
+  //   xMax: 20,
+  //   yMin: 0,
+  //   yMax: 20,
+  // };
   const area = {
     xMin: 0,
-    xMax: 20,
+    xMax: 4000000,
     yMin: 0,
-    yMax: 20,
+    yMax: 4000000,
   };
   for (let x = area.xMin; x <= area.xMax; x++) {
     for (let y = area.yMin; y <= area.yMax; y++) {
       const possible = { x, y };
-      if (sensors.every((s) => !s.manhattanNear(possible))) return possible;
+      if (
+        sensors.every(
+          (s) =>
+            s.notNearX(possible) &&
+            s.notNearY(possible) &&
+            !s.manhattanNear(possible)
+        )
+      )
+        return possible;
       // if (sensor.beacon.y === KEY_ROW)
       //   knownNots.delete(`${sensor.beacon.x},${sensor.beacon.y}`);
     }
@@ -81,6 +95,16 @@ class Sensor {
     const dx = Math.abs(location.x - beacon.x);
     const dy = Math.abs(location.y - beacon.y);
     this.manhattan = dx + dy;
+  }
+
+  notNearX(p: Coord) {
+    const dx = Math.abs(this.location.x - p.x);
+    return dx > this.manhattan;
+  }
+
+  notNearY(p: Coord) {
+    const dy = Math.abs(this.location.y - p.y);
+    return dy > this.manhattan;
   }
 
   manhattanNear(p: Coord) {
