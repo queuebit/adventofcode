@@ -68,6 +68,9 @@ const part1 = (sensors: Sensor[]) => {
   }
   console.log(Array.from(knownNots).sort());
   console.log(knownNots.size);
+
+  // % time node aoc_bez.js < puzzle.in
+  // node aoc_bez.js < puzzle.in  1974.82s user 4.32s system 99% cpu 33:03.10 total
 };
 const part2 = () => {};
 
