@@ -37,32 +37,30 @@ var part1 = function (sensors) {
     // }
     // const possiblePossibiles = possibilities.size;
     // remove based on sensor knowledge
-    var KEY_ROW = 10;
+    var KEY_ROW = 2000000;
     var knownNots = new Set();
     for (var _a = 0, sensors_2 = sensors; _a < sensors_2.length; _a++) {
         var sensor = sensors_2[_a];
         // location
         if (sensor.location.y === KEY_ROW)
-            knownNots.add("".concat(sensor.location.x, "-").concat(sensor.location.y));
-        // beacon
-        if (sensor.beacon.y === KEY_ROW)
-            knownNots.add("".concat(sensor.beacon.x, "-").concat(sensor.beacon.y));
+            knownNots.add("".concat(sensor.location.x, ",").concat(sensor.location.y));
         // spaces manhattan from beacon
-        for (var dx = -sensor.manhattan + 1; dx < sensor.manhattan; dx++) {
-            if (sensor.location.x + dx < -2) {
-                console.log(sensor);
+        for (var dx = -sensor.manhattan; dx <= sensor.manhattan; dx++) {
+            if (sensor.location.y === KEY_ROW) {
+                knownNots.add("".concat(sensor.location.x + dx, ",").concat(sensor.location.y));
             }
-            if (sensor.location.y === KEY_ROW)
-                knownNots.add("".concat(sensor.location.x + dx, "-").concat(sensor.location.y));
-            for (var dy = 0; dy <= Math.abs(sensor.manhattan - dx); dy++) {
+            for (var dy = 0; dy <= Math.abs(Math.abs(dx) - sensor.manhattan); dy++) {
                 if (sensor.location.y + dy === KEY_ROW) {
-                    knownNots.add("".concat(sensor.location.x + dx, "-").concat(sensor.location.y + dy));
+                    knownNots.add("".concat(sensor.location.x + dx, ",").concat(sensor.location.y + dy));
                 }
                 if (sensor.location.y - dy === KEY_ROW) {
-                    knownNots.add("".concat(sensor.location.x + dx, "-").concat(sensor.location.y - dy));
+                    knownNots.add("".concat(sensor.location.x + dx, ",").concat(sensor.location.y - dy));
                 }
             }
         }
+        // beacon
+        if (sensor.beacon.y === KEY_ROW)
+            knownNots["delete"]("".concat(sensor.beacon.x, ",").concat(sensor.beacon.y));
     }
     console.log(Array.from(knownNots).sort());
     console.log(knownNots.size);
