@@ -30,40 +30,32 @@ const part1 = (sensors: Sensor[]) => {
     }
   }
 
-  // establish possible points
-  // let possibilities = new Set<string>();
-  // for (let x = area.minX; x <= area.maxX; x++) {
-  //   for (let y = area.minY; y <= area.maxY; y++) {
-  //     possibilities.add(`${x}-${y}`);
-  //   }
-  // }
-  // const possiblePossibiles = possibilities.size;
-
-  // remove based on sensor knowledge
   const KEY_ROW = 2000000;
   // const KEY_ROW = 10;
   let knownNots = new Set<string>();
   for (const sensor of sensors) {
-    for (let ax = area.minX - 1e3; ax <= area.maxX + 1e3; ax++) {
-      const possible = { x: ax, y: KEY_ROW };
-      if (sensor.manhattanNear(possible))
-        knownNots.add(`${possible.x},${possible.y}`);
+    const dy = Math.abs(KEY_ROW - sensor.location.y);
+    if (dy <= sensor.manhattan) {
+      const possible = { x: sensor.location.x, y: KEY_ROW };
+      knownNots.add(`${possible.x},${possible.y}`);
+      for (let dx = 1; dx <= sensor.manhattan - Math.abs(dy); dx++) {
+        const possiblePlus = { x: sensor.location.x + dx, y: KEY_ROW };
+        const possibleMinus = { x: sensor.location.x - dx, y: KEY_ROW };
+        knownNots.add(`${possiblePlus.x},${possiblePlus.y}`);
+        knownNots.add(`${possibleMinus.x},${possibleMinus.y}`);
+      }
     }
 
     // beacon
     if (sensor.beacon.y === KEY_ROW)
       knownNots.delete(`${sensor.beacon.x},${sensor.beacon.y}`);
   }
-  console.log(Array.from(knownNots).sort());
   console.log(knownNots.size);
 
   // % time node aoc_bez.js < puzzle.in
   // node aoc_bez.js < puzzle.in  1974.82s user 4.32s system 99% cpu 33:03.10 total
-  // That's not the right answer; your answer is too low.
-  // If you're stuck, make sure you're using the full input data;
-  // there are also some general tips on the about page,
-  // or you can ask for hints on the subreddit.
-  // Please wait one minute before trying again. (You guessed 3447420.) [Return to Day 15]
+  // That's not the right answer; your answer is too low. (You guessed 3447420.) [Return to Day 15]
+  // That's not the right answer; your answer is too low. (You guessed 3866028.) [Return to Day 15]
 };
 const part2 = () => {};
 

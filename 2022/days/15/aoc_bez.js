@@ -28,33 +28,31 @@ var part1 = function (sensors) {
             area.maxY = sensorMaxY;
         }
     }
-    // establish possible points
-    // let possibilities = new Set<string>();
-    // for (let x = area.minX; x <= area.maxX; x++) {
-    //   for (let y = area.minY; y <= area.maxY; y++) {
-    //     possibilities.add(`${x}-${y}`);
-    //   }
-    // }
-    // const possiblePossibiles = possibilities.size;
-    // remove based on sensor knowledge
     var KEY_ROW = 2000000;
     // const KEY_ROW = 10;
     var knownNots = new Set();
     for (var _a = 0, sensors_2 = sensors; _a < sensors_2.length; _a++) {
         var sensor = sensors_2[_a];
-        for (var ax = area.minX - 1e3; ax <= area.maxX + 1e3; ax++) {
-            var possible = { x: ax, y: KEY_ROW };
-            if (sensor.manhattanNear(possible))
-                knownNots.add("".concat(possible.x, ",").concat(possible.y));
+        var dy = Math.abs(KEY_ROW - sensor.location.y);
+        if (dy <= sensor.manhattan) {
+            var possible = { x: sensor.location.x, y: KEY_ROW };
+            knownNots.add("".concat(possible.x, ",").concat(possible.y));
+            for (var dx = 1; dx <= sensor.manhattan - Math.abs(dy); dx++) {
+                var possiblePlus = { x: sensor.location.x + dx, y: KEY_ROW };
+                var possibleMinus = { x: sensor.location.x - dx, y: KEY_ROW };
+                knownNots.add("".concat(possiblePlus.x, ",").concat(possiblePlus.y));
+                knownNots.add("".concat(possibleMinus.x, ",").concat(possibleMinus.y));
+            }
         }
         // beacon
         if (sensor.beacon.y === KEY_ROW)
             knownNots["delete"]("".concat(sensor.beacon.x, ",").concat(sensor.beacon.y));
     }
-    console.log(Array.from(knownNots).sort());
     console.log(knownNots.size);
     // % time node aoc_bez.js < puzzle.in
     // node aoc_bez.js < puzzle.in  1974.82s user 4.32s system 99% cpu 33:03.10 total
+    // That's not the right answer; your answer is too low. (You guessed 3447420.) [Return to Day 15]
+    // That's not the right answer; your answer is too low. (You guessed 3866028.) [Return to Day 15]
 };
 var part2 = function () { };
 var Sensor = /** @class */ (function () {
