@@ -47,12 +47,19 @@ var part1 = function (sensors) {
         // beacon
         if (sensor.beacon.y === KEY_ROW)
             knownNots["delete"]("".concat(sensor.beacon.x, ",").concat(sensor.beacon.y));
+        // console.log({
+        //   sz: knownNots.size,
+        //   dy,
+        //   y: sensor.location.y,
+        //   man: sensor.manhattan,
+        //   yp: sensor.location.y + sensor.manhattan,
+        //   ym: sensor.location.y - sensor.manhattan,
+        //   diff: sensor.manhattan - dy,
+        //   guess: 2 * (sensor.manhattan - dy) + 1,
+        //   m1Beacon: sensor.beacon.y === KEY_ROW,
+        // });
     }
     console.log(knownNots.size);
-    // % time node aoc_bez.js < puzzle.in
-    // node aoc_bez.js < puzzle.in  1974.82s user 4.32s system 99% cpu 33:03.10 total
-    // That's not the right answer; your answer is too low. (You guessed 3447420.) [Return to Day 15]
-    // That's not the right answer; your answer is too low. (You guessed 3866028.) [Return to Day 15]
 };
 var part2 = function () { };
 var Sensor = /** @class */ (function () {
@@ -72,7 +79,7 @@ var Sensor = /** @class */ (function () {
 }());
 var sensorArray = [];
 rl.on("line", function (line) {
-    var rSensor = /Sensor at x=(?<sx>\d+), y=(?<sy>\d+): closest beacon is at x=(?<bx>\d+), y=(?<by>\d+)/;
+    var rSensor = /Sensor at x=(?<sx>\-?\d+), y=(?<sy>\-?\d+): closest beacon is at x=(?<bx>\-?\d+), y=(?<by>\-?\d+)/;
     var match = line.match(rSensor);
     if (match && match.groups) {
         var l = {
@@ -85,6 +92,9 @@ rl.on("line", function (line) {
         };
         var s = new Sensor(l, b);
         sensorArray.push(s);
+    }
+    else {
+        console.log(line);
     }
 });
 rl.once("close", function () {

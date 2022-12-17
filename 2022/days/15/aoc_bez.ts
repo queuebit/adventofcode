@@ -49,13 +49,19 @@ const part1 = (sensors: Sensor[]) => {
     // beacon
     if (sensor.beacon.y === KEY_ROW)
       knownNots.delete(`${sensor.beacon.x},${sensor.beacon.y}`);
+    // console.log({
+    //   sz: knownNots.size,
+    //   dy,
+    //   y: sensor.location.y,
+    //   man: sensor.manhattan,
+    //   yp: sensor.location.y + sensor.manhattan,
+    //   ym: sensor.location.y - sensor.manhattan,
+    //   diff: sensor.manhattan - dy,
+    //   guess: 2 * (sensor.manhattan - dy) + 1,
+    //   m1Beacon: sensor.beacon.y === KEY_ROW,
+    // });
   }
   console.log(knownNots.size);
-
-  // % time node aoc_bez.js < puzzle.in
-  // node aoc_bez.js < puzzle.in  1974.82s user 4.32s system 99% cpu 33:03.10 total
-  // That's not the right answer; your answer is too low. (You guessed 3447420.) [Return to Day 15]
-  // That's not the right answer; your answer is too low. (You guessed 3866028.) [Return to Day 15]
 };
 const part2 = () => {};
 
@@ -82,7 +88,7 @@ class Sensor {
 let sensorArray: Sensor[] = [];
 rl.on("line", (line: string) => {
   const rSensor =
-    /Sensor at x=(?<sx>\d+), y=(?<sy>\d+): closest beacon is at x=(?<bx>\d+), y=(?<by>\d+)/;
+    /Sensor at x=(?<sx>\-?\d+), y=(?<sy>\-?\d+): closest beacon is at x=(?<bx>\-?\d+), y=(?<by>\-?\d+)/;
   const match = line.match(rSensor);
   if (match && match.groups) {
     const l = {
@@ -95,6 +101,8 @@ rl.on("line", (line: string) => {
     };
     const s = new Sensor(l, b);
     sensorArray.push(s);
+  } else {
+    console.log(line);
   }
 });
 
