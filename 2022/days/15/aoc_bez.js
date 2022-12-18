@@ -51,21 +51,31 @@ var part1 = function (sensors) {
     console.log(knownNots.size);
 };
 var part2 = function (sensors) {
-    // const area = {
-    //   xMin: 0,
-    //   xMax: 20,
-    //   yMin: 0,
-    //   yMax: 20,
-    // };
     var area = {
         xMin: 0,
-        xMax: 4000000,
+        xMax: 20,
         yMin: 0,
-        yMax: 4000000
+        yMax: 20
     };
-    for (var x = area.xMin; x <= area.xMax; x++) {
-        var _loop_1 = function (y) {
-            var possible = { x: x, y: y };
+    // const area = {
+    //   xMin: 0,
+    //   xMax: 4000000,
+    //   yMin: 0,
+    //   yMax: 4000000,
+    // };
+    var startingPoint = {
+        x: (area.xMax + area.xMin) / 2,
+        y: (area.yMax + area.yMin) / 2
+    };
+    for (var i = 0; i <= area.xMax / 2; i++) {
+        var possibles = [
+            { x: startingPoint.x + i, y: startingPoint.y + i },
+            { x: startingPoint.x + i, y: startingPoint.y - i },
+            { x: startingPoint.x - i, y: startingPoint.y - i },
+            { x: startingPoint.x - i, y: startingPoint.y + i },
+        ];
+        var _loop_1 = function (possible) {
+            console.log(possible);
             if (sensors.every(function (s) {
                 return s.notNearX(possible) &&
                     s.notNearY(possible) &&
@@ -73,8 +83,9 @@ var part2 = function (sensors) {
             }))
                 return { value: possible };
         };
-        for (var y = area.yMin; y <= area.yMax; y++) {
-            var state_1 = _loop_1(y);
+        for (var _i = 0, possibles_1 = possibles; _i < possibles_1.length; _i++) {
+            var possible = possibles_1[_i];
+            var state_1 = _loop_1(possible);
             if (typeof state_1 === "object")
                 return state_1.value;
         }

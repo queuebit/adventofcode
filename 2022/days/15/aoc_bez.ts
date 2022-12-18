@@ -53,21 +53,31 @@ const part1 = (sensors: Sensor[]) => {
   console.log(knownNots.size);
 };
 const part2 = (sensors: Sensor[]) => {
-  // const area = {
-  //   xMin: 0,
-  //   xMax: 20,
-  //   yMin: 0,
-  //   yMax: 20,
-  // };
   const area = {
     xMin: 0,
-    xMax: 4000000,
+    xMax: 20,
     yMin: 0,
-    yMax: 4000000,
+    yMax: 20,
   };
-  for (let x = area.xMin; x <= area.xMax; x++) {
-    for (let y = area.yMin; y <= area.yMax; y++) {
-      const possible = { x, y };
+  // const area = {
+  //   xMin: 0,
+  //   xMax: 4000000,
+  //   yMin: 0,
+  //   yMax: 4000000,
+  // };
+  const startingPoint = {
+    x: (area.xMax + area.xMin) / 2,
+    y: (area.yMax + area.yMin) / 2,
+  };
+  for (let i = 0; i <= area.xMax / 2; i++) {
+    const possibles = [
+      { x: startingPoint.x + i, y: startingPoint.y + i },
+      { x: startingPoint.x + i, y: startingPoint.y - i },
+      { x: startingPoint.x - i, y: startingPoint.y - i },
+      { x: startingPoint.x - i, y: startingPoint.y + i },
+    ];
+    for (let possible of possibles) {
+      console.log(possible);
       if (
         sensors.every(
           (s) =>
@@ -77,8 +87,6 @@ const part2 = (sensors: Sensor[]) => {
         )
       )
         return possible;
-      // if (sensor.beacon.y === KEY_ROW)
-      //   knownNots.delete(`${sensor.beacon.x},${sensor.beacon.y}`);
     }
   }
   return { x: 0, y: 0 };
