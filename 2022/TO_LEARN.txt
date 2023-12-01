@@ -7,6 +7,7 @@
 - [ ] Mocha / Unit tests #testing
 - [ ] Auto-run folder unit tests on save #testing
 - [ ] VSCode #administrivia
+- [ ] Algorithms and speed running tips - https://www.youtube.com/watch?v=kC-5jF1QKJ8&list=WL&index=16
 
 -----
 
