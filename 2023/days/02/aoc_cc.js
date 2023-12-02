@@ -56,7 +56,20 @@ var part1 = function (games) {
     console.log(possibleGames);
     console.log(possibleGames.reduce(function (acc, g) { return acc + g.gameId; }, 0));
 };
-var part2 = function () { };
+var part2 = function (games) {
+    var power = games.map(function (g) {
+        var reds = [];
+        var greens = [];
+        var blues = [];
+        g.rounds.forEach(function (r) {
+            reds.push(r.red);
+            blues.push(r.blue);
+            greens.push(r.green);
+        });
+        return Math.max.apply(Math, reds) * Math.max.apply(Math, greens) * Math.max.apply(Math, blues);
+    });
+    console.log(power.reduce(function (acc, n) { return acc + n; }, 0));
+};
 var games = [];
 rl.on("line", function (line) {
     console.log(line);
@@ -65,5 +78,5 @@ rl.on("line", function (line) {
 rl.once("close", function () {
     part1(games);
     // 2751 - too high
-    part2();
+    part2(games);
 });

@@ -68,7 +68,20 @@ const part1 = (games: Game[]) => {
   console.log(possibleGames);
   console.log(possibleGames.reduce((acc, g) => acc + g.gameId, 0));
 };
-const part2 = () => {};
+const part2 = (games: Game[]) => {
+  const power = games.map((g) => {
+    const reds: number[] = [];
+    const greens: number[] = [];
+    const blues: number[] = [];
+    g.rounds.forEach((r) => {
+      reds.push(r.red);
+      blues.push(r.blue);
+      greens.push(r.green);
+    });
+    return Math.max(...reds) * Math.max(...greens) * Math.max(...blues);
+  });
+  console.log(power.reduce((acc, n) => acc + n, 0));
+};
 
 const games: Game[] = [];
 rl.on("line", (line: string) => {
@@ -79,5 +92,5 @@ rl.on("line", (line: string) => {
 rl.once("close", () => {
   part1(games);
   // 2751 - too high
-  part2();
+  part2(games);
 });
