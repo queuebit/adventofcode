@@ -51,8 +51,7 @@ rl.on("line", (line: string) => {
 });
 
 const part1 = () => {
-  console.log(parts);
-  console.log(symbols.filter((s) => s.symbol === "\\"));
+  // console.log(parts);
 
   const partNumbers = parts.filter((p) => {
     //left
@@ -84,13 +83,13 @@ const part1 = () => {
       );
     });
 
-    console.log(
-      p.number,
-      lSymbols.length,
-      rSymbols.length,
-      upSymbols.length,
-      downSymbols.length
-    );
+    // console.log(
+    //   p.number,
+    //   lSymbols.length,
+    //   rSymbols.length,
+    //   upSymbols.length,
+    //   downSymbols.length
+    // );
     return (
       lSymbols.length > 0 ||
       rSymbols.length > 0 ||
@@ -98,12 +97,61 @@ const part1 = () => {
       downSymbols.length > 0
     );
   });
-  console.log(partNumbers);
-  console.log(parts.length);
-  console.log(partNumbers.length);
+  // console.log(partNumbers);
+  // console.log(parts.length);
+  // console.log(partNumbers.length);
   console.log(partNumbers.reduce((acc, p) => acc + p.number, 0));
 };
-const part2 = () => {};
+const part2 = () => {
+  const possibleGears = symbols.filter((s) => s.symbol === "*");
+  console.log(possibleGears);
+
+  const gearRatios = possibleGears.map((s) => {
+    //left
+    const lParts = parts.filter((p) => {
+      return s.location.y === p.location.y && s.location.x === p.location.x - 1;
+    });
+    //right
+    const rParts = parts.filter((p) => {
+      return (
+        s.location.y === p.location.y &&
+        s.location.x === p.location.x + p.number.toString().length
+      );
+    });
+
+    //up with corners
+    const upParts = parts.filter((p) => {
+      return (
+        s.location.y === p.location.y - 1 &&
+        s.location.x >= p.location.x - 1 &&
+        s.location.x <= p.location.x + p.number.toString().length
+      );
+    });
+
+    //down with corners
+    const downParts = parts.filter((p) => {
+      return (
+        s.location.y === p.location.y + 1 &&
+        s.location.x >= p.location.x - 1 &&
+        s.location.x <= p.location.x + p.number.toString().length
+      );
+    });
+
+    if (
+      lParts.length + rParts.length + upParts.length + downParts.length ===
+      2
+    ) {
+      return [...lParts, ...rParts, ...upParts, ...downParts].reduce(
+        (acc, p) => acc * p.number,
+        1
+      );
+    } else {
+      return 0;
+    }
+  });
+  console.log(gearRatios);
+  console.log(gearRatios.reduce((acc, gr) => acc + gr, 0));
+};
 
 rl.once("close", () => {
   part1();
